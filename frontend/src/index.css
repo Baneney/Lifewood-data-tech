@@ -1,0 +1,41 @@
+@import 'tailwindcss';
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.333%); }
+}
+
+@theme {
+  --font-sans: 'Manrope', sans-serif;
+}
+
+body {
+  font-family: 'Manrope', sans-serif;
+}
+
+
+
+
+@layer utilities {
+  /* This creates the hollow outlined text effect from World of NRG */
+  .border-text {
+    -webkit-text-stroke: 1.5px rgba(255, 255, 255, 0.4);
+    color: transparent;
+    transition: all 0.5s ease;
+  }
+  
+  .border-text:hover {
+    -webkit-text-stroke: 1.5px #FFB347;
+    color: transparent;
+  }
+
+  /* Smooth fade-in for the text on load */
+  .animate-fade-in {
+    animation: fadeIn 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}

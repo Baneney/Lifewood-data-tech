@@ -6,9 +6,11 @@ import imgVision from "@/assets/about-us/about-vision.jpeg"
 import vidCollection from "@/assets/services/services-datacollection.mp4"
 import vidCuration from "@/assets/about-us/about-lifewoodvid.mp4"
 
+
 // Components
 import StatCounter from "../helper/statcounter"
 import VideoHero from "../components/VideoModal"
+import InteractiveVision from "../components/InteractiveVision"
 
 
 export default function About() {
@@ -60,15 +62,7 @@ export default function About() {
       </section>
 
       {/* ── 3. FULL-BLEED VIDEO ── */}
-      <section className="relative h-[80vh] overflow-hidden border-y border-white/10">
-        <video autoPlay muted loop playsInline src={vidCollection} className="absolute inset-0 w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-linear-to-r from-[#021a11] via-[#021a11]/40 to-transparent" />
-        <div className="relative h-full flex flex-col justify-center px-8 md:px-16">
-          <h2 className="text-5xl md:text-8xl font-black leading-none tracking-tighter uppercase max-w-4xl">
-            Fueling the<br />Next Wave
-          </h2>
-        </div>
-      </section>
+      <InteractiveVision videoSrc={vidCollection} />
 
       {/* ── 4. MISSION & VISION — Grid Masonry ── */}
       <section className="grid md:grid-cols-2 gap-px bg-white/5">

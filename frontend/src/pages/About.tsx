@@ -3,17 +3,26 @@ import { Link } from "react-router-dom"
 // Assets
 import imgMission from "@/assets/about-us/about-mission.jpeg"
 import imgVision from "@/assets/about-us/about-vision.jpeg"
-import vidCollection from "@/assets/services/services-datacollection.mp4"
 import vidCuration from "@/assets/about-us/about-lifewoodvid.mp4"
 
 
 // Components
-import StatCounter from "../helper/statcounter"
 import VideoHero from "../components/VideoModal"
-import InteractiveVision from "../components/InteractiveVision"
+import ScrollStack from "../components/ScrollStack"
+import OfficeGrid from "../components/OfficeMaps"
+
 
 
 export default function About() {
+
+  const aboutItems = [
+    { tag: "01", label: "Diversity", desc: "We celebrate differences in belief, philosophy and ways of life, because they bring unique perspectives and ideas that encourage everyone to move forward." },
+    { tag: "02", label: "Caring", desc: "We care for every person deeply and equally, because without care work becomes meaningless." },
+    { tag: "03", label: "Innovation", desc: "Innovation is at the heart of all we do, enriching our lives and challenging us to continually improve ourselves and our service." },
+    { tag: "04", label: "Integrity", desc: "We are dedicated to act ethically and sustainably in everything we do. More than just the bare minimum. It is the basis of our existence as a company." }
+  ];
+
+
   return (
     <div className="bg-[#021a11] text-white selection:bg-[#FFB347] selection:text-[#034E34]">
 
@@ -48,7 +57,7 @@ export default function About() {
           />
         </div>
       </section>
-
+ 
       {/* ── 2. MANIFESTO — Minimalist Split ── */}
       <section className="py-40 px-8 md:px-16 border-t border-white/5 grid grid-cols-12 gap-8">
         <div className="col-span-12 md:col-span-4">
@@ -62,7 +71,13 @@ export default function About() {
       </section>
 
       {/* ── 3. FULL-BLEED VIDEO ── */}
-      <InteractiveVision videoSrc={vidCollection} />
+      {/* <InteractiveVision videoSrc={vidCollection} /> */}
+      <ScrollStack 
+        bgText="LIFEWOOD" 
+        headline="Core"
+        headlineAccent="Values"
+        items={aboutItems} 
+      />
 
       {/* ── 4. MISSION & VISION — Grid Masonry ── */}
       <section className="grid md:grid-cols-2 gap-px bg-white/5">
@@ -70,7 +85,7 @@ export default function About() {
           <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.3em] mb-6">Our Mission</p>
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-8">Delivering Data<br />That Performs</h2>
           <p className="text-gray-400 leading-relaxed max-w-md">
-            Providing high-quality annotation and curation services that enable AI teams to build faster, smarter, and more reliably.
+            To develop and deploy cutting edge Al technologies that solve real-world problems, empower communities, and advance sustainable practices. We are committed to fostering a culture of innovation, collaborating with stakeholders across sectors, and making a meaningful impact on society and the environment.
           </p>
         </div>
         <div className="relative h-[60vh] md:h-auto overflow-hidden">
@@ -83,13 +98,13 @@ export default function About() {
           <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.3em] mb-6">Our Vision</p>
           <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-8">A World Powered<br />By Trust</h2>
           <p className="text-gray-400 leading-relaxed max-w-md">
-            We envision a future where every AI system is built on a foundation of clean, reliable, and ethically sourced data.
+            To be the global champion in Al data solutions, igniting a culture of innovation and sustainability that enriches lives and transforms communities worldwide.
           </p>
         </div>
       </section>
 
       {/* ── 5. STATS ── */}
-      <section className="py-32 px-8 md:px-16 bg-[#021a11]">
+      {/* <section className="py-32 px-8 md:px-16 bg-[#021a11]">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
           {[
             { value: 40, suffix: "+", label: "Centers" },
@@ -105,7 +120,8 @@ export default function About() {
             </div>
           ))}
         </div>
-      </section>
+      </section> */}
+      <OfficeGrid />
 
       {/* ── 6. CTA — Massive NRG Style ── */}
       <section className="min-h-screen flex flex-col justify-center items-center text-center px-8 py-32 border-t border-white/5 relative overflow-hidden">

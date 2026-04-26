@@ -10,6 +10,7 @@ import vidCuration from "@/assets/about-us/about-lifewoodvid.mp4"
 import VideoHero from "../components/VideoModal"
 import ScrollStack from "../components/ScrollStack"
 import OfficeGrid from "../components/OfficeMaps"
+import InteractiveSplit from "../components/InteractiveSplit"
 
 
 
@@ -21,6 +22,24 @@ export default function About() {
     { tag: "03", label: "Innovation", desc: "Innovation is at the heart of all we do, enriching our lives and challenging us to continually improve ourselves and our service." },
     { tag: "04", label: "Integrity", desc: "We are dedicated to act ethically and sustainably in everything we do. More than just the bare minimum. It is the basis of our existence as a company." }
   ];
+
+
+  const missionVisionData = [
+      {
+        id: "01",
+        title: "Our Mission",
+        headline: "Delivering Data That Performs",
+        desc: "To develop and deploy cutting edge AI technologies that solve real-world problems, empower communities, and advance sustainable practices.",
+        img: imgMission,
+      },
+      {
+        id: "02",
+        title: "Our Vision",
+        headline: "A World Powered By Trust",
+        desc: "To be the global champion in AI data solutions, igniting a culture of innovation and sustainability that enriches lives worldwide.",
+        img: imgVision,
+      },
+    ];  
 
 
   return (
@@ -71,56 +90,18 @@ export default function About() {
       </section>
 
       {/* ── 3. FULL-BLEED VIDEO ── */}
-      {/* <InteractiveVision videoSrc={vidCollection} /> */}
       <ScrollStack 
         bgText="LIFEWOOD" 
+        eyebrow="[Our Foundation]"
         headline="Core"
         headlineAccent="Values"
         items={aboutItems} 
       />
 
       {/* ── 4. MISSION & VISION — Grid Masonry ── */}
-      <section className="grid md:grid-cols-2 gap-px bg-white/5">
-        <div className="flex flex-col justify-center px-10 md:px-20 py-32 bg-[#021a11]">
-          <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.3em] mb-6">Our Mission</p>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-8">Delivering Data<br />That Performs</h2>
-          <p className="text-gray-400 leading-relaxed max-w-md">
-            To develop and deploy cutting edge Al technologies that solve real-world problems, empower communities, and advance sustainable practices. We are committed to fostering a culture of innovation, collaborating with stakeholders across sectors, and making a meaningful impact on society and the environment.
-          </p>
-        </div>
-        <div className="relative h-[60vh] md:h-auto overflow-hidden">
-          <img src={imgMission} alt="" className="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
-        </div>
-        <div className="relative h-[60vh] md:h-auto overflow-hidden order-last md:order-0">
-          <img src={imgVision} alt="" className="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000" />
-        </div>
-        <div className="flex flex-col justify-center px-10 md:px-20 py-32 bg-[#032418]">
-          <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.3em] mb-6">Our Vision</p>
-          <h2 className="text-4xl md:text-5xl font-black uppercase tracking-tighter leading-none mb-8">A World Powered<br />By Trust</h2>
-          <p className="text-gray-400 leading-relaxed max-w-md">
-            To be the global champion in Al data solutions, igniting a culture of innovation and sustainability that enriches lives and transforms communities worldwide.
-          </p>
-        </div>
-      </section>
+      <InteractiveSplit items={missionVisionData} />
 
-      {/* ── 5. STATS ── */}
-      {/* <section className="py-32 px-8 md:px-16 bg-[#021a11]">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-          {[
-            { value: 40, suffix: "+", label: "Centers" },
-            { value: 30, suffix: "+", label: "Countries" },
-            { value: 50, suffix: "+", label: "Languages" },
-            { value: 56000, suffix: "+", label: "Resources" },
-          ].map(s => (
-            <div key={s.label} className="group">
-              <div className="text-5xl md:text-7xl font-black text-white/10 group-hover:text-[#FFB347] transition-colors duration-500">
-                <StatCounter value={s.value} suffix={s.suffix} />
-              </div>
-              <p className="mt-4 text-[10px] uppercase tracking-[0.3em] text-gray-500 font-bold">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section> */}
+      {/* ── 5. OFIICE MAPS*/}
       <OfficeGrid />
 
       {/* ── 6. CTA — Massive NRG Style ── */}
@@ -133,11 +114,12 @@ export default function About() {
         <h2 className="relative z-10 text-6xl md:text-[10rem] font-black leading-[0.8] tracking-tighter uppercase mb-16">
           Ready to<br /><span className="text-transparent border-text">Scale?</span>
         </h2>
-        <Link
-          to="/contact"
-          className="relative z-10 bg-[#FFB347] text-[#021a11] px-12 py-6 font-black text-sm uppercase tracking-[0.2em] hover:bg-white transition-all duration-300"
+        <Link 
+          to="/contact" 
+          className="group relative overflow-hidden bg-[#FFB347] text-[#021a11] px-8 py-3 rounded-full font-bold text-md transition-all duration-300 hover:shadow-[0_0_40px_8px_rgba(255,179,71,0.3)] hover:-translate-y-1"
         >
-          Get In Touch →
+          <span className="relative z-10">Get In Touch Now</span>
+          <div className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500" />
         </Link>
       </section>
     </div>

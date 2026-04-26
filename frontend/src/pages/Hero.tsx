@@ -10,8 +10,6 @@ import homevid from "@/assets/home/home-world-vid.mp4"
 import vidAnnotation from "@/assets/services/services-dataannotation.mp4"
 import vidCollection from "@/assets/services/services-datacollection.mp4"
 import vidCuration from "@/assets/services/services-datacuration.mp4"
-import vidValidation from "@/assets/services/services-datavalidation.mp4"
-import vidAcquisition from "@/assets/services/services-dataacquisition.mp4"
 
 import imgAI from "@/assets/projects/project-aicustomerservice.jpeg"
 import imgAuto from "@/assets/projects/project-autodriving.jpeg"
@@ -20,7 +18,6 @@ import imgNLP from "@/assets/projects/project-nlp.jpeg"
 import imgCV from "@/assets/projects/projects-computervision.jpeg"
 import imgExtract from "@/assets/projects/project-dataextraction.jpeg"
 
-import logo from "@/assets/Lifewood-Logo.png"
 import logoV2 from "@/assets/Lifewood-LogoV2.png"
 
 export default function Home() {

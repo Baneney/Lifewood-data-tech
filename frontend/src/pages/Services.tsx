@@ -58,15 +58,10 @@ export default function Services() {
   const current = SERVICES[active]
 
   return (
-    <div onMouseMove={handleMouseMove} className="w-full bg-[#021a11] text-white selection:bg-[#FFB347] selection:text-[#021a11]">
+    <div onMouseMove={handleMouseMove} className="w-full text-white selection:bg-[#FFB347] selection:text-[#021a11]">
       
       {/* ── SECTION 1: HERO (Sticky Video Engine) ── */}
       <section className="relative h-screen w-full overflow-hidden">
-        {/* Dynamic Mouse Glow */}
-        <div 
-          className="pointer-events-none absolute inset-0 z-50 opacity-20 transition-opacity duration-500 hidden md:block"
-          style={{ background: `radial-gradient(600px at ${mousePos.x}px ${mousePos.y}px, ${current.color}33, transparent 80%)` }}
-        />
 
         {/* Background Videos */}
         {SERVICES.map((s, i) => (
@@ -85,8 +80,7 @@ export default function Services() {
         ))}
 
         {/* Overlays */}
-        <div className="absolute inset-0 bg-linear-to-r from-[#021a11] via-[#021a11]/40 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#021a11] via-transparent to-[#021a11]/40" />
+        <div className="absolute inset-0 bg-linear-to-t from-[#021a11] via-transparent to-[#021a11]/40" />
 
         {/* Content Block */}
         <div className="absolute bottom-32 md:bottom-20 left-6 md:left-24 z-20 w-full pr-12 md:pr-0">

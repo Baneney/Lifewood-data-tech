@@ -178,98 +178,98 @@ export default function Projects() {
     <div className="bg-black text-white">
 
       {/* ── Hero ── */}
-    <section 
-        ref={heroRef}
-        className="relative min-h-screen flex flex-col justify-end pb-16 px-8 md:px-16 overflow-hidden border-b border-white/10"
-        >
-        {/* Dynamic Parallax Background */}
-        <motion.div 
-            style={{ y: heroBgY }}
-            className="absolute inset-0 z-0"
-        >
-            <img src={imgCV} alt="" className="w-full h-full object-cover opacity-20 scale-110" />
-            <div className="absolute inset-0 bg-linear-to-t from-[#021a11] via-transparent to-transparent" />
-        </motion.div>
-
-        {/* Animated Foreground Content */}
-        <motion.div 
-            style={{ y: heroTextY, opacity: heroOpacity }}
-            className="relative z-10"
-        >
-            <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8 }}
+        <section 
+            ref={heroRef}
+            className="relative min-h-screen flex flex-col justify-end pb-16 px-8 md:px-16 overflow-hidden border-b border-white/10"
             >
-            <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-                <span className="w-8 h-px bg-[#FFB347]" />
-                Our Work
-            </p>
+            {/* Dynamic Parallax Background */}
+            <motion.div 
+                style={{ y: heroBgY }}
+                className="absolute inset-0 z-0"
+            >
+                <img src={imgCV} alt="" className="w-full h-full object-cover opacity-20 scale-110" />
+                <div className="absolute inset-0 bg-linear-to-t from-[#021a11] via-transparent to-transparent" />
             </motion.div>
 
-            <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-black leading-none tracking-tighter uppercase overflow-hidden">
-                {"Projects".split("").map((char, i) => (
-                    <motion.span
-                        key={i}
-                        // Removed the display="..." prop from here
-                        initial={{ y: "100%" }}
-                        animate={{ y: 0 }}
-                        transition={{ 
-                            duration: 0.8, 
-                            delay: i * 0.05, 
-                            ease: [0.22, 1, 0.36, 1] 
-                        }}
-                        // className="inline-block" already handles the display logic
-                        className="inline-block"
-                        >
-                        {/* Handle spaces properly if your string had them */}
-                        {char === " " ? "\u00A0" : char}
-                    </motion.span>
-                ))}
-            </h1>
-
+            {/* Animated Foreground Content */}
             <motion.div 
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.8 }}
+                style={{ y: heroTextY, opacity: heroOpacity }}
+                className="relative z-10"
             >
-                <div className="mt-8 w-16 h-px bg-[#FFB347]/50" />
-                <p className="mt-6 text-gray-400 text-lg max-w-lg leading-relaxed font-medium">
-                    Real-world <span className="text-white">AI data projects</span> across computer vision, NLP, and machine learning — delivered at scale.
+                <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8 }}
+                >
+                <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
+                    <span className="w-8 h-px bg-[#FFB347]" />
+                    Our Work
                 </p>
+                </motion.div>
 
-                {/* Interactive Stats Chips */}
-                <div className="mt-12 flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em]">
-                    {[
-                    { label: PROJECTS.length + " Projects", color: "#FFB347" },
-                    { label: TAGS.length - 1 + " Categories", color: "white" },
-                    { label: "Global Delivery", color: "white" }
-                    ].map((stat, i) => (
+                <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-black leading-none tracking-tighter uppercase overflow-hidden">
+                    {"Projects".split("").map((char, i) => (
                         <motion.span
                             key={i}
-                            whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
-                            className="px-4 py-2 border border-white/10 rounded-full text-white/50 cursor-default transition-colors"
-                            style={{ borderColor: i === 0 ? stat.color : "rgba(255,255,255,0.1)" }}
-                        >
-                            {stat.label}
+                            // Removed the display="..." prop from here
+                            initial={{ y: "100%" }}
+                            animate={{ y: 0 }}
+                            transition={{ 
+                                duration: 0.8, 
+                                delay: i * 0.05, 
+                                ease: [0.22, 1, 0.36, 1] 
+                            }}
+                            // className="inline-block" already handles the display logic
+                            className="inline-block"
+                            >
+                            {/* Handle spaces properly if your string had them */}
+                            {char === " " ? "\u00A0" : char}
                         </motion.span>
                     ))}
-                </div>
-            </motion.div>
-        </motion.div>
+                </h1>
 
-        {/* Refined Scroll Indicator */}
-        <div className="absolute bottom-8 right-8 md:right-16 flex flex-col items-center gap-4">
-            <div className="w-[1px] h-12 bg-gradient-to-b from-transparent via-white/20 to-white/20 relative overflow-hidden">
-            <motion.div 
-                animate={{ y: [0, 48, 0] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                className="absolute top-0 left-0 w-full h-1/3 bg-[#FFB347]"
-            />
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6, duration: 0.8 }}
+                >
+                    <div className="mt-8 w-16 h-px bg-[#FFB347]/50" />
+                    <p className="mt-6 text-gray-400 text-lg max-w-lg leading-relaxed font-medium">
+                        Real-world <span className="text-white">AI data projects</span> across computer vision, NLP, and machine learning — delivered at scale.
+                    </p>
+
+                    {/* Interactive Stats Chips */}
+                    <div className="mt-12 flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em]">
+                        {[
+                        { label: PROJECTS.length + " Projects", color: "#FFB347" },
+                        { label: TAGS.length - 1 + " Categories", color: "white" },
+                        { label: "Global Delivery", color: "white" }
+                        ].map((stat, i) => (
+                            <motion.span
+                                key={i}
+                                whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
+                                className="px-4 py-2 border border-white/10 rounded-full text-white/50 cursor-default transition-colors"
+                                style={{ borderColor: i === 0 ? stat.color : "rgba(255,255,255,0.1)" }}
+                            >
+                                {stat.label}
+                            </motion.span>
+                        ))}
+                    </div>
+                </motion.div>
+            </motion.div>
+
+            {/* Refined Scroll Indicator */}
+            <div className="absolute bottom-8 right-8 md:right-16 flex flex-col items-center gap-4">
+                <div className="w-px h-12 bg-linear-to-b from-transparent via-white/20 to-white/20 relative overflow-hidden">
+                <motion.div 
+                    animate={{ y: [0, 48, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+                    className="absolute top-0 left-0 w-full h-1/3 bg-[#FFB347]"
+                />
+                </div>
+                <span className="text-white/20 text-[10px] uppercase tracking-[0.3em] vertical-text">Scroll</span>
             </div>
-            <span className="text-white/20 text-[10px] uppercase tracking-[0.3em] vertical-text">Scroll</span>
-        </div>
-    </section>
+        </section>
 
       {/* ── Sticky scroll ── */}
       <StickyProjects projects={PROJECTS} itemRefs={itemRefs} />

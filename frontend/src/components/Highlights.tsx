@@ -47,23 +47,26 @@ export default function Highlight({ img, tag, title, desc, to, reverse }: Highli
 
       {/* ── Text side ── */}
       <div
-        className={`relative w-full md:w-1/2 flex flex-col justify-center px-10 py-12 overflow-hidden transition-colors duration-500 
-        ${hovered ? "bg-[#034E34]" : "bg-gray-50"}`}
+        className={`relative w-full md:w-1/2 flex flex-col justify-center px-10 py-12 overflow-hidden transition-all duration-500 
+        ${hovered 
+          ? "bg-[#417256]/20 backdrop-blur-xl" // Light green glass on hover
+          : "bg-white/5 backdrop-blur-md"      // Dark glass by default
+        } border-l border-white/10`}
       >
         {/* Animated background circles */}
         <div className={`absolute -top-10 -right-10 w-40 h-40 rounded-full bg-[#FFB347]/10 transition-transform duration-700 ${hovered ? "scale-150" : "scale-0"}`} />
         <div className={`absolute -bottom-6 -left-6 w-28 h-28 rounded-full bg-[#FFB347]/10 transition-transform duration-700 delay-100 ${hovered ? "scale-150" : "scale-0"}`} />
 
         {/* Tag — transitions color on hover */}
-        <span className={`text-xs font-semibold uppercase tracking-widest transition-colors duration-300 ${hovered ? "text-[#FFB347]" : "text-[#666666]"}`}>
+        <span className={`text-xs font-semibold uppercase tracking-widest transition-colors duration-300 ${hovered ? "text-[#FFB347]" : "text-white/40"}`}>
           {tag}
         </span>
 
-        <h3 className={`mt-3 text-2xl md:text-3xl font-bold leading-snug transition-colors duration-300 ${hovered ? "text-white" : "text-[#034E34]"}`}>
+        <h3 className={`mt-3 text-2xl md:text-3xl font-bold leading-snug transition-colors duration-300 ${hovered ? "text-white" : "text-white/90"}`}>
           {title}
         </h3>
 
-        <p className={`mt-4 leading-relaxed transition-colors duration-300 ${hovered ? "text-gray-300" : "text-[#666666]"}`}>
+        <p className={`mt-4 leading-relaxed transition-colors duration-300 ${hovered ? "text-gray-200" : "text-gray-400"}`}>
           {desc}
         </p>
 
@@ -72,8 +75,8 @@ export default function Highlight({ img, tag, title, desc, to, reverse }: Highli
           to={to}
           className={`mt-6 inline-flex items-center gap-2 font-semibold transition-all duration-300 w-fit ${
             hovered
-              ? "bg-[#FFB347] text-white px-5 py-2 rounded-full gap-3 shadow-lg hover:bg-[#FFC370]"
-              : "text-[#034E34] hover:gap-4"
+              ? "bg-[#FFB347] text-[#021a11] px-5 py-2 rounded-full gap-3 shadow-lg hover:bg-[#FFC370]"
+              : "text-[#FFB347] hover:gap-4"
           }`}
         >
           Learn more <span className={`transition-transform duration-300 ${hovered ? "translate-x-1" : ""}`}>→</span>

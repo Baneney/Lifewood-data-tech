@@ -58,7 +58,7 @@ export default function Services() {
   const current = SERVICES[active]
 
   return (
-    <div onMouseMove={handleMouseMove} className="w-full bg-black text-white selection:bg-[#FFB347]/30">
+    <div onMouseMove={handleMouseMove} className="w-full bg-[#021a11] text-white selection:bg-[#FFB347] selection:text-[#021a11]">
       
       {/* ── SECTION 1: HERO (Sticky Video Engine) ── */}
       <section className="relative h-screen w-full overflow-hidden">
@@ -78,14 +78,15 @@ export default function Services() {
             className="absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"
             style={{ 
               opacity: i === active ? 1 : 0,
-              filter: i === active ? 'grayscale(0.2) brightness(0.4)' : 'grayscale(1) brightness(0.2)' 
+              // Using 'multiply' or 'overlay' blend modes can also help the video take on the background color
+              filter: i === active ? 'grayscale(0.4) brightness(0.5)' : 'grayscale(1) brightness(0.2)' 
             }}
           />
         ))}
 
         {/* Overlays */}
-        <div className="absolute inset-0 bg-linear-to-r from-black via-black/40 to-transparent" />
-        <div className="absolute inset-0 bg-linear-to-t from-black via-transparent to-black/40" />
+        <div className="absolute inset-0 bg-linear-to-r from-[#021a11] via-[#021a11]/40 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#021a11] via-transparent to-[#021a11]/40" />
 
         {/* Content Block */}
         <div className="absolute bottom-32 md:bottom-20 left-6 md:left-24 z-20 w-full pr-12 md:pr-0">
@@ -119,7 +120,7 @@ export default function Services() {
         </div>
 
         {/* ── RESTORED: Right Navigation Menu ── */}
-        <div className="absolute right-8 md:right-16 top-1/2 -translate-y-1/2 z-30 flex flex-col gap-2">
+        <div className="absolute right-8 md:right-16 top-118 -translate-y-1/2 z-30 flex flex-col gap-2">
           {SERVICES.map((s, i) => (
             <button
               key={s.id}

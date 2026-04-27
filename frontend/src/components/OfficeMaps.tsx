@@ -161,7 +161,7 @@ export default function OfficeMaps() {
                   `inline-block` forces the box to wrap its content tightly.
                   `p-6` gives space, `pr-12` ensures the "X" doesn't overlap text.
                 */}
-                <div className="relative inline-block p-6 pr-12 bg-[#021a11]/95 border border-[#FFB347]/30 backdrop-blur-2xl shadow-2xl min-w-[200px] w-auto">
+                <div className="relative inline-block p-6 pr-12 bg-[#021a11]/95 border border-[#FFB347]/30 backdrop-blur-2xl shadow-2xl min-w-50 w-auto">
                   
                   {/* 1. X Button: Positioned absolute in the corner relative to this new wrapper */}
                   <button 

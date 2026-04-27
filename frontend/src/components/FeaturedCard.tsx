@@ -22,7 +22,7 @@ export default function FeaturedCard({ title, tag, video, to }: FeaturedCardProp
       <div className="absolute bottom-0 p-6">
         <span className="text-xs text-[#FFB347] font-semibold uppercase tracking-widest">{tag}</span>
         <h3 className="mt-1 text-white text-xl font-bold">{title}</h3>
-        <span className="mt-3 inline-flex items-center gap-1 text-sm text-[#034E34] font-medium group-hover:gap-3 transition-all duration-200">
+        <span className="mt-3 inline-flex items-center gap-1 text-sm text-[#708E7C] font-medium group-hover:gap-3 transition-all duration-200">
           Learn more <span>→</span>
         </span>
       </div>

@@ -7,6 +7,8 @@ import About from "./pages/About"
 import Services from "./pages/Services"
 import Contact from "./pages/Contact"
 import Projects from "./pages/Projects"
+import ApplicationForm from "./pages/ApplicationForm"
+import Careers from "./pages/Careers"
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -26,6 +28,8 @@ function App() {
         <Route path="/projects" element={<Projects />} />
         <Route path="/projects/:id" element={<Projects />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/careers" element={<Careers />} />
+        <Route path="/apply/:jobTitle" element={<ApplicationForm />} />
       </Routes>
       <Footer />
     </BrowserRouter>

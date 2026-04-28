@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 import Highlight from "../components/Highlights"
 import FeaturedCard from "../components/FeaturedCard"
 import InsightCard from "../components/InsightCard"
-import StatCounter from "../helper/statcounter"
+import StatCounter from "../helpers/statcounter"
 
 import homevid from "@/assets/home/home-world-vid.mp4"
 

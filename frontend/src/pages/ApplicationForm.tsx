@@ -3,6 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload } from 'lucide-react';
 
+//components
+import { DatePicker } from "@/components/ui/datepicker";
+
+
+
 interface FormFieldProps {
   label: string;
   placeholder: string;
@@ -91,7 +96,7 @@ export default function ApplicationForm() {
                            <p className="text-[10px] font-bold text-[#133020]/50 uppercase tracking-widest mb-1">Applying for</p>
                            <p className="text-lg font-black text-[#133020]">{decodedTitle}</p>
                          </div>
-                        <LightFormField label="First Name" placeholder="e.g. Sem Luiz" />
+                        <LightFormField label="First Name" placeholder="e.g. Sem Luiz"/>
                         <LightFormField label="Last Name" placeholder="e.g. Warain" />
                         <div className="flex flex-col gap-3 group">
                           <label className="text-[10px] uppercase tracking-widest font-black text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">Gender</label>
@@ -104,7 +109,16 @@ export default function ApplicationForm() {
                             <div className="absolute top-1/2 right-6 -translate-y-1/2 text-[#133020]/30 pointer-events-none text-[10px]">▼</div>
                           </div>
                         </div>
-                        <LightFormField label="Age" type="number" placeholder="21" />
+
+                        <div className="flex flex-col gap-3 group">
+                          <label className="text-[10px] uppercase tracking-widest font-black text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
+                            Birth Date
+                          </label>
+                          
+                          <DatePicker 
+                            className="py-6 px-6 bg-white border border-[#133020]/10 rounded-xl focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-sm font-bold transition-all duration-300 hover:border-[#133020]/30" 
+                          />
+                        </div>
                       </div>
                     </section>
                   )}
@@ -147,7 +161,7 @@ export default function ApplicationForm() {
                 {currentStep < totalSteps ? (
                   <button
                     onClick={nextStep}
-                    className="group bg-[#133020] text-white px-10 py-4 rounded-full text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-4 hover:bg-[#021a11] transition-all hover:shadow-2xl hover:shadow-[#021a11]/20 active:scale-95"
+                    className="group bg-[#133020] text-white px-10 py-4 rounded-full text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-4 hover:bg-[#046241] transition-all hover:shadow-2xl hover:shadow-[#021a11]/20 active:scale-95"
                   >
                     Continue <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
                   </button>
@@ -166,6 +180,7 @@ export default function ApplicationForm() {
     </div>
   );
 }
+
 
 function LightFormField({ label, placeholder, type = "text" }: FormFieldProps) {
   return (

@@ -7,14 +7,6 @@ import JobCard from "../components/JobCard"
 
 
 
-//Paramaters
-interface JobRole {
-  title: string;
-  type: string;
-  location: string;
-  desc: string;
-}
-
 // ── Data ──────────────────────────────────────────────────────────────────────
 
 const PERKS = [
@@ -84,11 +76,6 @@ export default function Careers() {
       )
     })).filter(dept => dept.roles.length > 0)
 
-  // NAVIGATE TO FORM PAGE
-  const handleJobClick = (role: JobRole) => {
-    const encodedTitle = encodeURIComponent(role.title);
-    navigate(`/apply/${encodedTitle}`);
-  };
   
   return (
     <div className="min-h-screen bg-[#021a11] text-white selection:bg-[#FFB347] selection:text-[#021a11]">
@@ -203,7 +190,7 @@ export default function Careers() {
                         </div>
                         <div className="grid md:grid-cols-2 gap-8">
                           {dept.roles.map((role) => (
-                            <div key={role.title} onClick={() => handleJobClick(role)} className="cursor-pointer">
+                            <div key={role.title} onClick={() => navigate(`/apply`)} className="cursor-pointer">
                                 <JobCard role={role} />
                             </div>
                           ))}

@@ -9,6 +9,9 @@ import Contact from "./pages/Contact"
 import Projects from "./pages/Projects"
 import ApplicationForm from "./pages/ApplicationForm"
 import Careers from "./pages/Careers"
+import { Toaster } from "./components/ui/sonner"
+
+
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -21,6 +24,7 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <Navbar />
+      <Toaster position="bottom-right" />
       <Routes>
         <Route path="/" element={<Hero />} />
         <Route path="/about" element={<About />} />
@@ -29,7 +33,7 @@ function App() {
         <Route path="/projects/:id" element={<Projects />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/careers" element={<Careers />} />
-        <Route path="/apply/:jobTitle" element={<ApplicationForm />} />
+        <Route path="/apply" element={<ApplicationForm />} />
       </Routes>
       <Footer />
     </BrowserRouter>

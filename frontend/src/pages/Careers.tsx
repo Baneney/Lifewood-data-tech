@@ -87,28 +87,11 @@ export default function Careers() {
              backgroundSize: "50px 50px" 
            }} />
 
-      {/* ── 1. PERKS ── */}
       <section className="relative z-10 py-32 px-8 md:px-16">
         <div className="max-w-7xl mx-auto">
-          <div className="max-w-2xl mb-20">
+          <div className="max-w-2xl">
             <span className="text-[10px] font-black text-[#FFB347] uppercase tracking-[0.5em] border-l-4 border-[#FFB347] pl-4 mb-6 block">Why Lifewood</span>
             <h2 className="text-5xl font-black text-white leading-tight uppercase tracking-tighter">More than a job.<br />A global mission.</h2>
-          </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {PERKS.map((p, i) => (
-              <motion.div
-                key={p.title}
-                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="group p-10 rounded-3xl border border-white/5 bg-white/5 backdrop-blur-md hover:bg-[#417256]/10 hover:border-[#FFB347]/20 transition-all duration-500"
-              >
-                <div className="w-14 h-14 bg-white/5 rounded-2xl flex items-center justify-center text-[#FFB347] mb-8 group-hover:bg-[#FFB347] group-hover:text-[#021a11] transition-all duration-500">
-                  {p.icon}
-                </div>
-                <h3 className="text-xl font-bold text-white mb-4 uppercase tracking-tight">{p.title}</h3>
-                <p className="text-white/40 text-sm leading-relaxed">{p.desc}</p>
-              </motion.div>
-            ))}
           </div>
         </div>
       </section>

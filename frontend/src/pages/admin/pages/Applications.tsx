@@ -1,6 +1,21 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Search, Filter, X, Phone, Mail, MapPin, Calendar, FileText } from "lucide-react"
 import { APPLICATIONS, STATUS_COLORS, STATUSES, DEPTS, type Application, type AppStatus } from "../data"
+// Import your new table components here
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
+
+//supabase
+import { supabase } from "@/supabaseClient";
+
+
 
 export default function Applications() {
   const [apps, setApps]         = useState(APPLICATIONS)
@@ -10,6 +25,29 @@ export default function Applications() {
   const [selected, setSelected] = useState<Application | null>(null)
   const [editNote, setEditNote] = useState("")
   const [editStatus, setEditStatus] = useState<AppStatus>("New")
+
+  const [positions, setPositions] = useState<{ 
+    id: string; 
+    title: string 
+  
+  }[]>([]);
+
+
+  useEffect(() => {
+    const fetchPositions = async () => {
+      const { data, error } = await supabase
+        .from('position') // Replace with your actual table name
+        .select('id, title');
+      
+      if (error) {
+        console.error("Error fetching positions:", error);
+      } else {
+        setPositions(data || []);
+      }
+    };
+
+    fetchPositions();
+  }, []);
 
   const filtered = apps.filter(a =>
     (dept === "All" || a.dept === dept) &&
@@ -33,7 +71,7 @@ export default function Applications() {
   }
 
   return (
-    <div className="space-y-5 max-w-7xl mx-auto">
+    <div className="space-y-5 max-w-7xl mx-auto p-5">
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -75,65 +113,72 @@ export default function Applications() {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b border-gray-50 bg-gray-50/50 text-left">
-                {["Applicant", "Role", "Department", "Location", "Date", "Status", ""].map(h => (
-                  <th key={h} className="px-5 py-3 text-[10px] font-black text-gray-400 uppercase tracking-widest whitespace-nowrap">
-                    {h}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
-              {filtered.map(a => (
-                <tr
-                  key={a.id}
-                  className="hover:bg-gray-50/50 transition-colors cursor-pointer"
-                  onClick={() => openDetail(a)}
-                >
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-[#034E34]/10 flex items-center justify-center text-[#034E34] text-[10px] font-black shrink-0">
-                        {a.name.split(" ").map(n => n[0]).join("")}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-gray-900">{a.name}</p>
-                        <p className="text-xs text-gray-400">{a.email}</p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-5 py-3.5 text-gray-600 max-w-[180px] truncate">{a.role}</td>
-                  <td className="px-5 py-3.5 text-gray-400 text-xs">{a.dept}</td>
-                  <td className="px-5 py-3.5 text-gray-400 text-xs">{a.location}</td>
-                  <td className="px-5 py-3.5 text-gray-400 text-xs whitespace-nowrap">{a.date}</td>
-                  <td className="px-5 py-3.5">
-                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${STATUS_COLORS[a.status]}`}>
-                      {a.status}
-                    </span>
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <button
-                      onClick={e => { e.stopPropagation(); openDetail(a) }}
-                      className="text-xs text-[#034E34] font-bold hover:underline"
-                    >
-                      View
-                    </button>
-                  </td>
-                </tr>
+      {/* NEW TABLE COMPONENTS */}
+      <div className="bg-white rounded border border-gray-100 shadow-sm overflow-hidden">
+        <Table>
+          <TableHeader className="bg-gray-50/50">
+            <TableRow>
+              {["Applicant", "Role", "Department", "Location", "Date", "Status", ""].map(h => (
+                <TableHead key={h} className="px-5 py-4 text-md font-black text-white uppercase tracking-widest bg-[#046241]/40 font-light">
+                  {h}
+                </TableHead>
               ))}
-            </tbody>
-          </table>
-          {filtered.length === 0 && (
-            <div className="text-center py-16 text-gray-300 text-sm">No applications found.</div>
-          )}
-        </div>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filtered.map(a => (
+              <TableRow
+                key={a.id}
+                className="cursor-pointer"
+                onClick={() => openDetail(a)}
+              >
+                <TableCell className="px-5 py-3.5">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-[#034E34]/10 flex items-center justify-center text-[#034E34] text-[10px] font-black shrink-0">
+                      {a.name.split(" ").map(n => n[0]).join("")}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-900">{a.name}</p>
+                      <p className="text-xs text-gray-400">{a.email}</p>
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="px-5 py-3.5 text-gray-600 max-w-[180px] truncate">
+                  {a.role}
+                </TableCell>
+                <TableCell className="px-5 py-3.5 text-gray-400 text-xs">
+                  {a.dept}
+                </TableCell>
+                <TableCell className="px-5 py-3.5 text-gray-400 text-xs">
+                  {a.location}
+                </TableCell>
+                <TableCell className="px-5 py-3.5 text-gray-400 text-xs">
+                  {a.date}
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border ${STATUS_COLORS[a.status]}`}>
+                    {a.status}
+                  </span>
+                </TableCell>
+                <TableCell className="px-5 py-3.5">
+                  <button
+                    onClick={e => { e.stopPropagation(); openDetail(a) }}
+                    className="text-xs text-[#034E34] font-bold hover:underline"
+                  >
+                    View
+                  </button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        
+        {filtered.length === 0 && (
+          <div className="text-center py-16 text-gray-300 text-sm">No applications found.</div>
+        )}
       </div>
 
-      {/* Detail drawer */}
+      {/* Detail drawer remains the same... */}
       {selected && (
         <div className="fixed inset-0 z-50 flex">
           <div className="flex-1 bg-black/30 backdrop-blur-sm" onClick={() => setSelected(null)} />

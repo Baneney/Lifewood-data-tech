@@ -89,7 +89,7 @@ export default function ApplicationForm() {
       .from('application')
       .insert([
         {
-          apl_id: newApplicant.id, // Linking to the first table
+          act_id: newApplicant.id, // Linking to the first table
           pos_id: formData.position, // The ID from your dynamic dropdown
         }
       ]);

@@ -238,7 +238,7 @@ export default function AdminLayout() {
           <SidebarContent className="px-3 py-4">
             <SidebarGroup>
               <SidebarGroupLabel className="text-slate-400 text-[11px] font-semibold uppercase px-3 mb-2">
-                Main Navigation
+                Menu
               </SidebarGroupLabel>
               <SidebarMenu className="gap-1">
                 {NAV_MAIN.map(({ label, to, icon: Icon, end }) => {

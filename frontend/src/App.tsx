@@ -15,6 +15,11 @@ import AdminLayout from "./pages/admin/AdminLayout"
 import Overview from "./pages/admin/pages/Overview"
 import Applications from "./pages/admin/pages/Applications"
 import Positions from "./pages/admin/pages/Positions"
+import SignIn from "./pages/admin/pages/signIn"
+import RestrictedPage from "./pages/Restricted"
+
+import ProtectedRoute from "./pages/ProtectedRoutes"
+
 
 function ScrollToTop() {
   const { pathname } = useLocation()
@@ -48,16 +53,21 @@ function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/careers" element={<Careers />} />
           <Route path="/apply" element={<ApplicationForm />} />
+          <Route path="/go-back-now" element={<RestrictedPage />} />
         </Route>
         {/* Admin — no Navbar/Footer */}
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<Overview />} />
-          <Route path="applications" element={<Applications />} />
-          <Route path="positions" element={<Positions />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Overview />} />
+            <Route path="applications" element={<Applications />} />
+            <Route path="positions" element={<Positions />} />
+          </Route>
         </Route>
+        {/* Auth — no Navbar/Footer */}
+        <Route path="/admin/login" element={<SignIn />} />
       </Routes>
     </BrowserRouter>
-  )
+  );
 }
 
 export default App

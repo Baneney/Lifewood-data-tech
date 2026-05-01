@@ -23,6 +23,8 @@ const statusBreakdown = [
   { label: "Rejected",    count: rejected,    color: "bg-red-400" },
 ]
 
+
+
 function StatCard({ label, value, sub, icon: Icon, accent }: { label: string; value: string | number; sub: string; icon: React.ElementType; accent: string }) {
   return (
     <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">

@@ -9,42 +9,29 @@ import { Input } from '@/components/ui/input';
 import { uploadFile } from '@/helpers/fileUpload';
 import { FormLoader } from '@/components/FormLoader';
 import { toast } from "sonner";
+import { FormComboCheckbox } from '@/components/ui/form-combox-checkbox';
+import { FormSelect } from '@/components/ui/form-select';
 
 // hook / helper
 import { useForm } from '@/hooks/useForm';
-import { formatToDBDate } from '@/helpers/dateFormatter';
 
 
-//database
-import { supabase } from "@/supabaseClient";
+//Post
+import { usePostApplications } from './admin/api/application/ApplicationPostAPI';
+//Fetch
+import { useFetchPositions } from './admin/api/application/ApplicationFetchAPI';
+
 
 export default function ApplicationForm() {
   const navigate = useNavigate();
 
   //database
-  const [positions, setPositions] = useState<{ id: string; title: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-
-
-  //FETCH
-  useEffect(() => {
-    const fetchPositions = async () => {
-      const { data, error } = await supabase
-        .from('position') // Replace with your actual table name
-        .select('id, title');
-      
-      if (error) {
-        console.error("Error fetching positions:", error);
-      } else {
-        setPositions(data || []);
-      }
-    };
-
-    fetchPositions();
-  }, []);
+  //initialize for the position
+  const { positions } = useFetchPositions();
 
 
   //POST
@@ -64,41 +51,9 @@ export default function ApplicationForm() {
       const resumeUrl = await uploadFile(selectedFile, 'resumes', folderPath);
 
       // 2. Insert into Database
-      const { data: newApplicant, error: applicantError } = await supabase
-        .from('applicant')
-        .insert([
-          { 
-            fname: formData.fname,
-            lname: formData.lname,
-            email: formData.email,
-            phone: formData.phone,
-            address: formData.address,
-            gender: formData.gender,
-            dob: formatToDBDate(formData.dob),
-            country: formData.country,
-            resume: resumeUrl 
-          }
-        ])
-        .select() // This tells Supabase to return the inserted row
-        .single(); // We only inserted one, so we want a single object
+      await usePostApplications(formData, resumeUrl);
 
-      if (applicantError) throw applicantError;
-
-      //3. Insert into Application
-      const { error: applicationError } = await supabase
-      .from('application')
-      .insert([
-        {
-          act_id: newApplicant.id, // Linking to the first table
-          pos_id: formData.position, // The ID from your dynamic dropdown
-        }
-      ]);
-
-      if (applicationError) throw applicationError;
-
-      toast.success("Application submitted successfully!", {
-        description: "We've received your credentials and will be in touch.",
-      });
+      toast.success("Application submitted successfully!");
 
       navigate('/careers')
     } catch (error) {
@@ -127,13 +82,40 @@ export default function ApplicationForm() {
     fname: '',
     lname: '',
     gender: '',
-    dob: null as Date | null,
+    dob: new Date(),
     email: '',
     phone: '',
     address: '',
     country: '',
-    position: '',
+    position: [],
   });
+
+  //Gender Options
+  const genderOptions = [
+    { id: "male", name: "Male" },
+    { id: "female", name: "Female" }
+  ];
+
+  //Country Options
+  const countryOptions = [
+    { id: "Philippines", name: "Philippines" },
+    { id: "United States", name: "United States" },
+    { id: "United Kingdom", name: "United Kingdom" },
+    { id: "Canada", name: "Canada" },
+    { id: "Australia", name: "Australia" },
+    { id: "China", name: "China" },
+    { id: "India", name: "India" },
+    { id: "Japan", name: "Japan" },
+    { id: "Germany", name: "Germany" },
+    { id: "France", name: "France" },
+    { id: "Singapore", name: "Singapore" },
+    { id: "Malaysia", name: "Malaysia" },
+    { id: "Indonesia", name: "Indonesia" },
+    { id: "Thailand", name: "Thailand" },
+    { id: "Vietnam", name: "Vietnam" },
+    { id: "South Korea", name: "South Korea" },
+  ];
+
 
 
   return (
@@ -158,13 +140,13 @@ export default function ApplicationForm() {
         <div className="max-w-3xl mx-auto">
           
           {/* Main Glass Card - Using a cleaner Gray with better contrast */}
-          <div className="bg-[#D1D5DB] relative backdrop-blur-3xl rounded-[3rem] shadow-[0_50px_100px_-30px_rgba(0,0,0,0.5)] border border-white/30 overflow-hidden">
+          <div className="bg-[#D1D5DB] relative backdrop-blur-3xl rounded-xl shadow-[0_50px_100px_-30px_rgba(0,0,0,0.5)] border border-white/30 overflow-hidden">
             
 
             {/* ── INTERNAL LOADER ── */}
             <AnimatePresence>
               {isSubmitting && (
-                <FormLoader message="Syncing Credentials" />
+                <FormLoader message="Submitting..." />
               )}
             </AnimatePresence>
 
@@ -207,109 +189,92 @@ export default function ApplicationForm() {
                     <section className="space-y-10">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-10">
 
-                        <div className="md:col-span-2 flex flex-col gap-3 group">
-                          <label className="text-[10px] uppercase tracking-widest font-black text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
-                            Desired Position
+                        <div className="flex flex-col gap-3 group">
+                          <label className="text-[10px] uppercase tracking-widest font-bold text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
+                            Desired Position(s)
                           </label>
-                          <div className="relative">
-                            <select 
-                              // Important: Ensure formData.position is initialized to an empty string or the default ID
-                              value={formData.position} 
-                              onChange={(e) => handleInputChange('position', e.target.value)}
-                              className="w-full bg-white border border-[#133020]/10 rounded-2xl px-6 py-3.5 focus:outline-none focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 appearance-none text-[#133020] text-sm font-bold transition-all cursor-pointer"
-                            >
-                              <option value="" disabled>Select a Position</option>
-                              {positions.map((pos) => (
-                                <option key={pos.id} value={pos.id}>
-                                  {pos.title}
-                                </option>
-                              ))}
-                            </select>
-                            <div className="absolute top-1/2 right-6 -translate-y-1/2 text-[#133020]/30 pointer-events-none text-[10px]">▼</div>
-                          </div>
-                        </div>                      
+                          
+                          <FormComboCheckbox
+                            // Ensure 'position' in your useForm state is an array: []
+                            value={formData.position} 
+                            // This passes the array directly to your existing handleInputChange
+                            onValueChange={(selectedArray) => handleInputChange('position', selectedArray)}
+                            options={positions.map(p => ({ id: p.id, name: p.title }))}
+                            placeholder="Select positions..."
+                            showBadges={true}
+                          />
+                        </div>                        
 
 
                         {/*INPUT FIELDS*/}
                         <div className="flex flex-col gap-3 group">
-                          <label className="text-[10px] uppercase tracking-widest font-black text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
+                          <label className="text-[10px] uppercase tracking-widest font-bold text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
                             First Name
                           </label>
                           <Input 
                             value={formData.fname}
                             onChange={(e) => handleInputChange('fname', e.target.value)}
                             placeholder="Enter First Name"
-                            className="h-auto py-3.5 px-6 bg-white border border-[#133020]/10 rounded-2xl focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-sm font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
+                            className="h-auto py-3 px-3 bg-white border border-[#133020]/10 rounded-md focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-xs font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30 shadow-sm"
                           />
                         </div>
 
                         <div className="flex flex-col gap-3 group">
-                          <label className="text-[10px] uppercase tracking-widest font-black text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
+                          <label className="text-[10px] uppercase tracking-widest font-bold text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
                             Last Name
                           </label>
                           <Input 
                             value={formData.lname}
                             onChange={(e) => handleInputChange('lname', e.target.value)}                
-                            placeholder="Enter LastNname"
-                            className="h-auto py-3.5 px-6 bg-white border border-[#133020]/10 rounded-2xl focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-sm font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
+                            placeholder="Enter Last Name"
+                            className="h-auto py-3 px-3 bg-white border border-[#133020]/10 rounded-md focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-xs font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
                           />
                         </div>
                         
                         <div className="flex flex-col gap-3 group">
-                          <label className="text-[10px] uppercase tracking-widest font-black text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">Gender</label>
+                          <label className="text-[10px] uppercase tracking-widest font-bold text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">Gender</label>
                           <div className="relative">
-                            <select 
+                            {/* <select 
                               value={formData.gender} 
                               onChange={(e) => handleInputChange('gender', e.target.value)}
-                              className="w-full bg-white border border-[#133020]/10 rounded-2xl px-6 py-3.5 focus:outline-none focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 appearance-none text-[#133020] text-sm font-bold transition-all cursor-pointer"
+                              className="w-full bg-white border border-[#133020]/10 rounded-md px-6 py-2.5 focus:outline-none focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 appearance-none text-[#133020] text-sm font-bold transition-all cursor-pointer"
                             >
                               <option>Select Gender</option>
                               <option>Male</option>
                               <option>Female</option>
                             </select>
-                            <div className="absolute top-1/2 right-6 -translate-y-1/2 text-[#133020]/30 pointer-events-none text-[10px]">▼</div>
+                            <div className="absolute top-1/2 right-6 -translate-y-1/2 text-[#133020]/30 pointer-events-none text-xs">▼</div> */}
+                            <FormSelect
+                              label=""
+                              placeholder="Select Gender"
+                              value={formData.gender} // Your local state
+                              onValueChange={(val) => handleInputChange('gender', val)} // Your state handler
+                              options={genderOptions}
+                            />                          
                           </div>
                         </div>
 
                         <div className="flex flex-col gap-3 group">
-                          <label className="text-[10px] uppercase tracking-widest font-black text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
+                          <label className="text-[10px] uppercase tracking-widest font-bold text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">
                             Birth Date
                           </label>
                           
                           <DatePicker 
                             date={formData.dob}                            
                             onDateChange={(selectedDate) => handleInputChange('dob', selectedDate)}
-                            className="py-6 px-6 bg-white border border-[#133020]/10 rounded-xl focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-sm font-bold transition-all duration-300 hover:border-[#133020]/30" 
+                            className="py-5 px-6 bg-white border border-[#133020]/10 rounded-md focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-xs font-bold transition-all duration-300 hover:border-[#133020]/30" 
                           />
                         </div>
 
                         <div className="flex flex-col gap-3 group">
-                          <label className="text-[10px] uppercase tracking-widest font-black text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">Country</label>
+                          <label className="text-[10px] uppercase tracking-widest font-bold text-[#133020]/50 italic group-focus-within:text-[#133020] transition-colors">Country</label>
                           <div className="relative">
-                            <select 
-                              value={formData.country} 
-                              onChange={(e) => handleInputChange('country', e.target.value)}
-                              className="w-full bg-white border border-[#133020]/10 rounded-2xl px-6 py-3.5 focus:outline-none focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 appearance-none text-[#133020] text-sm font-bold transition-all cursor-pointer"
-                            >
-                              <option>Select Country</option>
-                              <option>Philippines</option>
-                              <option>United States</option>
-                              <option>United Kingdon</option>
-                              <option>Canada</option>
-                              <option>Australia</option>
-                              <option>China</option>    
-                              <option>India</option> 
-                              <option>Japan</option>  
-                              <option>Germany</option>       
-                              <option>France</option>    
-                              <option>Singapore</option>    
-                              <option>Malaysia</option>    
-                              <option>Indonesia</option>    
-                              <option>Thailand</option>    
-                              <option>Vietnam</option>         
-                              <option>South Korea</option>                                                                                                                                                                                                                                       
-                            </select>
-                            <div className="absolute top-1/2 right-6 -translate-y-1/2 text-[#133020]/30 pointer-events-none text-[10px]">▼</div>
+                            <FormSelect
+                              placeholder="Select Country"
+                              value={formData.country}
+                              onValueChange={(val) => handleInputChange('country', val)}
+                              options={countryOptions}
+                            />
                           </div>
                         </div>                        
                       </div>
@@ -327,7 +292,7 @@ export default function ApplicationForm() {
                           onChange={(e) => handleInputChange('email', e.target.value)}    
                           placeholder="Enter Email"
                           type="email"
-                          className="h-auto py-3.5 px-6 bg-white border border-[#133020]/10 rounded-2xl focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-sm font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
+                          className="h-auto py-3 px-6 bg-white border border-[#133020]/10 rounded-md focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-xs font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
                         />
                       </div>
 
@@ -339,7 +304,7 @@ export default function ApplicationForm() {
                           value={formData.phone}
                           onChange={(e) => handleInputChange('phone', e.target.value)}    
                           placeholder="Enter Phone Number"
-                          className="h-auto py-3.5 px-6 bg-white border border-[#133020]/10 rounded-2xl focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-sm font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
+                          className="h-auto py-3 px-6 bg-white border border-[#133020]/10 rounded-md focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-xs font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
                         />
                       </div>
 
@@ -352,7 +317,7 @@ export default function ApplicationForm() {
                             value={formData.address}
                             onChange={(e) => handleInputChange('address', e.target.value)}    
                             placeholder="Enter Current Address"
-                            className="h-auto py-3.5 px-6 bg-white border border-[#133020]/10 rounded-2xl focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-sm font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
+                            className="h-auto py-3 px-3 bg-white border border-[#133020]/10 rounded-md focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-xs font-bold placeholder:text-[#133020]/20 hover:border-[#133020]/30"
                           />
                         </div>
                       </div>

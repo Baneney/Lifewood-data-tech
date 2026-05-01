@@ -106,7 +106,7 @@ export function DataTable<TData, TValue>({
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow
                     key={headerGroup.id}
-                    className="h-10"
+                    className="h-13"
                   >
                     {headerGroup.headers.map((header) => (
                       <TableHead
@@ -163,7 +163,7 @@ export function DataTable<TData, TValue>({
                         <TableCell
                           key={cell.id}
                           style={{ width: cell.column.getSize() }}
-                          className={cn("text-left font-medium text-gray-700 pl-5", cellClassName, `${index % 2 == 1 && "bg-[#417256]/4"}`)}
+                          className={cn("text-left font-medium text-gray-700 pl-5 py-4", cellClassName, `${index % 2 == 1 && "bg-[#417256]/4"}`)}
                         >
                           {flexRender(cell.column.columnDef.cell, cell.getContext())}
                         </TableCell>

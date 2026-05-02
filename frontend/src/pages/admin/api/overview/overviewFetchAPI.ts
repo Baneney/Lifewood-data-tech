@@ -1,10 +1,8 @@
 import { supabase } from "@/supabaseClient";
 import { useState, useEffect } from "react";
 
-//======================================= APPLICATIONS =============================================
 
-
-export type ApplicationDataType = {
+export type RecentApplicationType = {
   id: string; 
   date_submitted: string;
   applicant: {
@@ -32,8 +30,8 @@ export type ApplicationDataType = {
   current_status?: string; 
 };
 
-export function useApplications() {
-  const [applications, setapplications] = useState<ApplicationDataType[]>([]);
+export function useRecentApplications() {
+  const [applications, setapplications] = useState<RecentApplicationType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -67,10 +65,11 @@ export function useApplications() {
         // Flattening the data so your table doesn't have to deal with the logs array
         const formattedData = data.map(app => ({
           ...app,
-          current_status: app.logs?.[0]?.status || 'Pending'
+            current_status: app.logs?.[0]?.status || 'Pending',
+            is_potential: app.logs?.[0]?.potential || false // Extract potential flag
         }));
         
-        setapplications(formattedData as unknown as ApplicationDataType[]);
+        setapplications(formattedData as unknown as RecentApplicationType[]);
       }
       setIsLoading(false);
     };
@@ -81,40 +80,3 @@ export function useApplications() {
   return { applications, isLoading };
 }
 
-
-
-//===================================== POSITION =========================================
-export type PositionDataType = {
-  id: string; 
-  title: string;
-  desc: string;
-  status: string;
-};
-
-export function useFetchPositions() {
-
-  const [positions, setPositions] = useState<PositionDataType[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPositions = async () => {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from('position')
-        .select(`id, title, desc, status`)
-
-      if (error) {
-        console.error('Error fetching positions:', error);
-      } else if (data) {
-        // We cast 'as unknown as ApplicationData[]' if Supabase types 
-        // aren't auto-generated, or just ensure the structures match.
-        setPositions(data as unknown as PositionDataType[]);
-      }
-      setIsLoading(false);
-    };
-
-    fetchPositions();
-  }, []);
-
-  return { positions, isLoading };
-}

@@ -29,18 +29,20 @@ export function DetailsDrawer({
         <Button
           variant="ghost"
           size="sm"
-          className="text-[#417256] hover:bg-[#417256]/10 font-medium text-xs group rounded-3xl px-4 py-2"
+          className="text-[#417256] font-medium text-xs group rounded-sm px-2"
         >
           {triggerLabel}
-          <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+          <ChevronRight
+            size={18}
+            className="group-hover:translate-x-1 bg-emerald-600/20 rounded-full ml-1"
+          />
         </Button>
       </SheetTrigger>
 
-      <SheetContent className="sm:max-w-md w-full flex flex-col border-l-0 shadow-2xl p-6">
+      <SheetContent className="sm:max-w-md w-full flex flex-col border-l-0 shadow-2xl p-6 rounded-l-2xl">
         {/* Sticky Header Section */}
-
-        <SheetHeader className="text-left p-0 pb-15">
-          <SheetTitle className="text-xl font-bold tracking-tight text-slate-700">
+        <SheetHeader className="text-left p-0 pb-6">
+          <SheetTitle className="text-xl font-bold tracking-tight text-[#046241]">
             {title}
           </SheetTitle>
           {description && (
@@ -50,8 +52,20 @@ export function DetailsDrawer({
           )}
         </SheetHeader>
 
-        {/* Scrollable Content */}
-        <div className="flex-1 overflow-y-auto custom-scrollbar pb-8">
+        {/* 
+          Scrollable Content with Subtle Emerald Scrollbar 
+          - scrollbar-thin: sets width
+          - scrollbar-thumb: sets the color
+          - scrollbar-track: keeps the background transparent
+        */}
+        <div
+          className="flex-1 overflow-y-auto pr-2 pb-8
+          [&::-webkit-scrollbar]:w-1.5
+          [&::-webkit-scrollbar-track]:bg-transparent
+          [&::-webkit-scrollbar-thumb]:bg-emerald-800/20
+          hover:[&::-webkit-scrollbar-thumb]:bg-emerald-800/60
+          [&::-webkit-scrollbar-thumb]:rounded-full"
+        >
           <div className="space-y-8">{children}</div>
         </div>
       </SheetContent>

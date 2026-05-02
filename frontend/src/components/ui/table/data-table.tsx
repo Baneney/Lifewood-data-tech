@@ -100,25 +100,22 @@ export function DataTable<TData, TValue>({
       <div className="relative overflow-hidden">
         {/* Fixed Header */}
         {header && (
-          <div className="bg-[#417256]/20 relative z-10">
+          <div className="bg-emerald-600/20 relative z-10">
             <Table className="table-fixed">
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow
-                    key={headerGroup.id}
-                    className="h-13"
-                  >
+                  <TableRow key={headerGroup.id} className="h-13">
                     {headerGroup.headers.map((header) => (
                       <TableHead
                         key={header.id}
                         style={{ width: header.getSize() }}
-                        className={cn("text-left pl-5", headerClassName)}
+                        className={cn("text-left pl-4 font-bold", headerClassName)}
                       >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
                               header.column.columnDef.header,
-                              header.getContext()
+                              header.getContext(),
                             )}
                       </TableHead>
                     ))}
@@ -130,11 +127,7 @@ export function DataTable<TData, TValue>({
         )}
 
         {/* Scrollable Body */}
-                {/* Scrollable Body */}
-        <div
-          className="overflow-auto"
-          style={{ maxHeight: maxHeight }}
-        >
+        <div className="overflow-auto" style={{ maxHeight: maxHeight }}>
           <Table className="table-fixed">
             {!header && (
               <TableHeader className="sr-only">
@@ -163,9 +156,16 @@ export function DataTable<TData, TValue>({
                         <TableCell
                           key={cell.id}
                           style={{ width: cell.column.getSize() }}
-                          className={cn("text-left font-medium text-gray-700 pl-5 py-4", cellClassName, `${index % 2 == 1 && "bg-[#417256]/4"}`)}
+                          className={cn(
+                            "text-left font-medium text-gray-700 pl-5 py-4",
+                            cellClassName,
+                            `${index % 2 == 1 && "bg-[#417256]/4"}`,
+                          )}
                         >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
                         </TableCell>
                       ))}
                     </TableRow>

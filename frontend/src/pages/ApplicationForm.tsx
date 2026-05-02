@@ -493,6 +493,19 @@ export default function ApplicationForm() {
       const resumeUrl = await uploadFile(selectedFile, "resumes", folderPath);
       await usePostApplications(formData, resumeUrl);
 
+      //triggers sending email to the user
+      await fetch(import.meta.env.VITE_SEND_EMAIL_FUNCTION_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
+        body: JSON.stringify({
+          name: `${formData.fname} ${formData.lname}`,
+          email: formData.email,
+        }),
+      });
+
       toast.success("Application submitted successfully!");
       navigate("/careers");
     } catch (error) {

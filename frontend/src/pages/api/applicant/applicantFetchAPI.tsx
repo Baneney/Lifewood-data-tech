@@ -28,9 +28,6 @@ import { supabase } from "@/supabaseClient";
 //   return conflict;
 // }
 
-
-
-
 export async function checkExistingEmailPhone(
   email: string,
   phone: string,
@@ -72,8 +69,6 @@ export async function checkExistingEmailPhone(
   const conflictField = record.email === cleanEmail ? "Email" : "Phone number";
   return { isExistingUser: false, conflictField, applicantId: null };
 }
-
-
 
 // export async function checkExistingEmailPhone(email: string, phone: string) {
 //   const cleanEmail = email.trim().toLowerCase();
@@ -131,17 +126,17 @@ export async function checkExistingEmailPhone(
 //   };
 // }
 
-
 export async function checkexistingApplication(
   fname: string,
   lname: string,
   email: string,
-  newSelectedPosIds: string[], // Pass the array from formData.position
+  newSelectedPosIds: string[],
 ) {
   const cleanFname = fname.trim().toLowerCase();
   const cleanLname = lname.trim().toLowerCase();
   const cleanEmail = email.trim().toLowerCase();
 
+  // 1. Fetch applications with their logs, ordered by newest first
   const { data: activeApps, error: fetchError } = await supabase
     .from("application")
     .select(
@@ -150,20 +145,33 @@ export async function checkexistingApplication(
       pos_id,
       position:pos_id ( title ),
       applicant!inner ( id, fname, lname, email ),
-      logs!inner ( status )
+      logs ( status, datetime )
     `,
     )
     .ilike("applicant.fname", cleanFname)
     .ilike("applicant.lname", cleanLname)
     .ilike("applicant.email", cleanEmail)
-    .or("status.eq.shortlisted,status.eq.pending", { foreignTable: "logs" });
+    // Order the nested logs by datetime descending
+    .order("datetime", { foreignTable: "logs", ascending: false });
 
   if (fetchError) throw fetchError;
 
-  // Now we compare the database results with the user's current input
-  const conflicts = activeApps?.filter((app) =>
-    newSelectedPosIds.includes(app.pos_id),
-  );
+  // 2. Filter for actual conflicts based ONLY on the latest log status
+  const conflicts = activeApps?.filter((app) => {
+    // Check if this application matches one the user is trying to apply for
+    const matchesPosition = newSelectedPosIds.includes(app.pos_id);
+
+    // Get the most recent log (it's the first one because of our .order() above)
+    const latestLog = app.logs?.[0];
+
+    const hasActiveStatus =
+      latestLog &&
+      ["shortlisted", "pending", "hired"].includes(
+        latestLog.status.toLowerCase(),
+      );
+
+    return matchesPosition && hasActiveStatus;
+  });
 
   return {
     hasConflict: conflicts && conflicts.length > 0,

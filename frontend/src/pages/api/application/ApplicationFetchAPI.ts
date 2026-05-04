@@ -83,6 +83,9 @@ export function useApplications() {
 
 
 
+
+
+
 //===================================== POSITION =========================================
 export type PositionDataType = {
   id: string; 
@@ -118,3 +121,8 @@ export function useFetchPositions() {
 
   return { positions, isLoading };
 }
+
+
+
+
+

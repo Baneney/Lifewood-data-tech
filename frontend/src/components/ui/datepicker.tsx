@@ -64,12 +64,8 @@ export function DatePicker({ className, date, onDateChange }: DatePickerProps) {
       <Popover>
         <PopoverTrigger asChild>
           <Button
-            variant="outline"
             className={cn(
               "w-full justify-between text-left font-bold transition-all duration-300",
-              "bg-white border-[#133020]/10 text-[#133020]",
-              "rounded-2xl py-7 px-6",
-              "hover:border-[#FFB347] focus:ring-2 focus:ring-[#FFB347]/20 focus:border-[#FFB347]",
               className
             )}
           >
@@ -79,7 +75,7 @@ export function DatePicker({ className, date, onDateChange }: DatePickerProps) {
                 date ? "text-[#FFB347]" : "opacity-30"
               )} />
               {date ? (
-                <span className="text-[#133020] font-bold">{format(date, "PPP")}</span>
+                <span className="font-bold">{format(date, "PPP")}</span>
               ) : (
                 <span className="opacity-40 font-medium">Pick a date</span>
               )}

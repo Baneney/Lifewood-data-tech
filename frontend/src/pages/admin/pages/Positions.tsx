@@ -856,7 +856,7 @@ import { cn } from "@/lib/utils";
 import {
   useFetchPositions,
   type PositionDataType,
-} from "../api/application/ApplicationFetchAPI";
+} from "../../api/application/ApplicationFetchAPI";
 import { Badge } from "@/components/ui/badge";
 import {
   Pagination,
@@ -905,9 +905,9 @@ import { useForm } from "@/hooks/useForm";
 
 //REQUESTTTTT
 // fetch
-import { useUpdatePosition } from "../api/position/positionUpdateAPI";
+import { useUpdatePosition } from "../../api/position/positionUpdateAPI";
 //post
-import { usePostPosition } from "../api/position/positionPostAPI";
+import { usePostPosition } from "../../api/position/positionPostAPI";
 
 
 const ITEMS_PER_PAGE = 10;

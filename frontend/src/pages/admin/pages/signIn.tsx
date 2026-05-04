@@ -6,7 +6,7 @@ import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import logo from "@/assets/Lifewood-LogoV2.png";
-import { signInWithEmail } from "../api/login/AdminLoginFetchAPI";
+import { signInWithEmail } from "../../api/login/AdminLoginFetchAPI";
 import { useForm } from "@/hooks/useForm";
 
 

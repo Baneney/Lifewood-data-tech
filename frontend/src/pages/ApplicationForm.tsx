@@ -395,10 +395,17 @@
 
 
 
+
+
+
+
+
+
 import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Upload, ChevronRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Upload  } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // components
 import { DatePicker } from "@/components/ui/datepicker";
@@ -409,12 +416,16 @@ import { toast } from "sonner";
 import { FormComboCheckbox } from "@/components/ui/form-combox-checkbox";
 import { FormSelect } from "@/components/ui/form-select";
 
+
 // hook / helper
 import { useForm } from "@/hooks/useForm";
+import { formatToDBDate } from "@/helpers/dateFormatter";
 
 // API
-import { usePostApplications } from "./admin/api/application/ApplicationPostAPI";
-import { useFetchPositions } from "./admin/api/application/ApplicationFetchAPI";
+import { usePostApplications } from "./api/application/ApplicationPostAPI";
+import { checkexistingApplication, checkExistingEmailPhone } from "@/pages/api/applicant/applicantFetchAPI";
+import { useFetchPositions } from "./api/application/ApplicationFetchAPI";
+
 
 export default function ApplicationForm() {
   const navigate = useNavigate();
@@ -466,20 +477,87 @@ export default function ApplicationForm() {
     { id: "South Korea", name: "South Korea" },
   ];
 
+  const [errors, setErrors] = useState({
+    position: false,
+    fname: false,
+    lname: false,
+    gender: false,
+    dob: false,
+    country: false,
+    email: false,
+    phone: false,
+    address: false,
+    resume: false,
+  });
+
+  const clearError = (field: keyof typeof errors) =>
+    setErrors((prev) => ({ ...prev, [field]: false }));
+
   // Handlers
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [currentStep]);
 
-  const nextStep = () =>
-    setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
-  const prevStep = () => setCurrentStep((prev) => Math.max(prev - 1, 1));
+  const nextStep = () => {
+    const newErrors = { ...errors };
+    let hasError = false;
+
+    if (currentStep === 1) {
+      if (formData.position.length === 0) { newErrors.position = true; hasError = true; }
+      if (!formData.fname.trim()) { newErrors.fname = true; hasError = true; }
+      if (!formData.lname.trim()) { newErrors.lname = true; hasError = true; }
+      if (!formData.gender.trim()) { newErrors.gender = true; hasError = true; }
+      if (!formData.dob) { newErrors.dob = true; hasError = true; }
+      if (!formData.country.trim()) { newErrors.country = true; hasError = true; }
+    }
+
+    if (currentStep === 2) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!formData.email.trim() || !emailRegex.test(formData.email)) { newErrors.email = true; hasError = true; }
+      if (!formData.phone.trim()) { newErrors.phone = true; hasError = true; }
+      if (!formData.address.trim()) { newErrors.address = true; hasError = true; }
+    }
+
+    setErrors(newErrors);
+    if (!hasError) setCurrentStep((prev) => Math.min(prev + 1, totalSteps));
+  };
+
+  const prevStep = () => {
+    setErrors({ position: false, fname: false, lname: false, gender: false, dob: false, country: false, email: false, phone: false, address: false, resume: false });
+    setCurrentStep((prev) => Math.max(prev - 1, 1));
+  };
 
   const handleSubmit = async () => {
+    
+    //1. check for existing email/phone
+    const check = await checkExistingEmailPhone(
+      formData.email,
+      formData.phone,
+      formData.fname,
+      formData.lname,
+      String(formatToDBDate(formData.dob)),
+    );
+    if (check.conflictField) {
+      toast.error(`${check.conflictField} is already registered to another user.`);
+      setIsSubmitting(false);
+      return;
+    }
+
+    //2. Check for any active application 
+    const { hasConflict, conflictingTitles } = await checkexistingApplication(
+      formData.fname,
+      formData.lname,
+      formData.email,
+      formData.position, // The array of IDs from your form
+    );
+    if (hasConflict) {
+      toast.error(`Already applied for: ${conflictingTitles.join(", ")}`);
+      return;
+    }
+
+
     if (!selectedFile) {
-      toast.warning("Please upload your resume first.", {
-        description: "A PDF or DOCX file is required to proceed.",
-      });
+      toast.error("Please upload your resume first.");
       return;
     }
 
@@ -491,7 +569,7 @@ export default function ApplicationForm() {
           "_",
         );
       const resumeUrl = await uploadFile(selectedFile, "resumes", folderPath);
-      await usePostApplications(formData, resumeUrl);
+      await usePostApplications(formData, resumeUrl, check.applicantId);
 
       //triggers sending email to the user
       await fetch(import.meta.env.VITE_SEND_EMAIL_FUNCTION_URL, {
@@ -602,90 +680,84 @@ export default function ApplicationForm() {
                   {currentStep === 1 && (
                     <section className="space-y-12">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div className="space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.position ? "text-red-400" : "text-white/40")}>
                             Desired Position(s)
                           </label>
                           <FormComboCheckbox
                             value={formData.position}
-                            onValueChange={(val) =>
-                              handleInputChange("position", val)
-                            }
-                            options={positions.map((p) => ({
-                              id: p.id,
-                              name: p.title,
-                            }))}
+                            onValueChange={(val) => { handleInputChange("position", val); clearError("position"); }}
+                            options={positions.map((p) => ({ id: p.id, name: p.title }))}
                             placeholder="Select positions..."
+                            className={cn("bg-white/5 h-12 rounded-2xl text-white placeholder:text-white/10 font-normal", errors.position ? "border-red-500" : "border-white/10 hover:border-white/30")}
                           />
+                          {errors.position && <p className="text-[10px] text-red-400 italic ml-1">Please select at least one position</p>}
                         </div>
 
-                        <div className="space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.fname ? "text-red-400" : "text-white/40")}>
                             First Name
                           </label>
                           <Input
                             value={formData.fname}
-                            onChange={(e) =>
-                              handleInputChange("fname", e.target.value)
-                            }
+                            onChange={(e) => { handleInputChange("fname", e.target.value); clearError("fname"); }}
                             placeholder="e.g. John"
-                            className="bg-white/5 border-white/10 focus:border-[#FFB347] h-14 rounded-2xl text-white placeholder:text-white/10"
+                            className={cn("bg-white/5 h-12 pl-4 rounded-2xl text-white placeholder:text-white/10", errors.fname ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-[#FFB347]")}
                           />
+                          {errors.fname && <p className="text-[10px] text-red-400 italic ml-1">This field is required</p>}
                         </div>
 
-                        <div className="space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.lname ? "text-red-400" : "text-white/40")}>
                             Last Name
                           </label>
                           <Input
                             value={formData.lname}
-                            onChange={(e) =>
-                              handleInputChange("lname", e.target.value)
-                            }
+                            onChange={(e) => { handleInputChange("lname", e.target.value); clearError("lname"); }}
                             placeholder="e.g. Doe"
-                            className="bg-white/5 border-white/10 focus:border-[#FFB347] h-14 rounded-2xl text-white placeholder:text-white/10"
+                            className={cn("bg-white/5 h-12 pl-4 rounded-2xl text-white placeholder:text-white/10", errors.lname ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-[#FFB347]")}
                           />
+                          {errors.lname && <p className="text-[10px] text-red-400 italic ml-1">This field is required</p>}
                         </div>
 
-                        <div className="space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.gender ? "text-red-400" : "text-white/40")}>
                             Gender
                           </label>
                           <FormSelect
                             placeholder="Select Gender"
                             value={formData.gender}
-                            onValueChange={(val) =>
-                              handleInputChange("gender", val)
-                            }
+                            onValueChange={(val) => { handleInputChange("gender", val); clearError("gender"); }}
                             options={genderOptions}
+                            className={cn("bg-white/5 py-6 pl-4 rounded-2xl text-white placeholder:text-white/10", errors.gender ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-[#FFB347]")}
                           />
+                          {errors.gender && <p className="text-[10px] text-red-400 italic ml-1">Please select your gender</p>}
                         </div>
 
-                        <div className="space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.dob ? "text-red-400" : "text-white/40")}>
                             Birth Date
                           </label>
                           <DatePicker
                             date={formData.dob}
-                            onDateChange={(val) =>
-                              handleInputChange("dob", val)
-                            }
-                            className="bg-white/5 border-white/10 h-14 rounded-2xl text-white"
+                            onDateChange={(val) => { handleInputChange("dob", val); clearError("dob"); }}
+                            className={cn("bg-white/5 h-12 px-4 rounded-2xl text-white border hover:bg-white/5 hover:text-white", errors.dob ? "border-red-500" : "border-white/10 hover:border-white/30")}
                           />
+                          {errors.dob && <p className="text-[10px] text-red-400 italic ml-1">Please select your date of birth</p>}
                         </div>
 
-                        <div className="space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.country ? "text-red-400" : "text-white/40")}>
                             Country
                           </label>
                           <FormSelect
                             placeholder="Select Country"
                             value={formData.country}
-                            onValueChange={(val) =>
-                              handleInputChange("country", val)
-                            }
+                            onValueChange={(val) => { handleInputChange("country", val); clearError("country"); }}
                             options={countryOptions}
+                            className={cn("bg-white/5 py-6 pl-4 rounded-2xl text-white placeholder:text-white/10", errors.country ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-[#FFB347]")}
                           />
+                          {errors.country && <p className="text-[10px] text-red-400 italic ml-1">Please select your country</p>}
                         </div>
                       </div>
                     </section>
@@ -694,47 +766,44 @@ export default function ApplicationForm() {
                   {currentStep === 2 && (
                     <section className="space-y-12">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                        <div className="space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.email ? "text-red-400" : "text-white/40")}>
                             Email Address
                           </label>
                           <Input
                             type="email"
                             value={formData.email}
-                            onChange={(e) =>
-                              handleInputChange("email", e.target.value)
-                            }
+                            onChange={(e) => { handleInputChange("email", e.target.value); clearError("email"); }}
                             placeholder="email@example.com"
-                            className="bg-white/5 border-white/10 focus:border-[#FFB347] h-14 rounded-2xl text-white"
+                            className={cn("bg-white/5 h-12 pl-4 rounded-2xl text-white", errors.email ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-[#FFB347]")}
                           />
+                          {errors.email && <p className="text-[10px] text-red-400 italic ml-1">Please enter a valid email address</p>}
                         </div>
 
-                        <div className="space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.phone ? "text-red-400" : "text-white/40")}>
                             Phone Number
                           </label>
                           <Input
                             value={formData.phone}
-                            onChange={(e) =>
-                              handleInputChange("phone", e.target.value)
-                            }
+                            onChange={(e) => { handleInputChange("phone", e.target.value); clearError("phone"); }}
                             placeholder="+63 --- --- ----"
-                            className="bg-white/5 border-white/10 focus:border-[#FFB347] h-14 rounded-2xl text-white"
+                            className={cn("bg-white/5 h-12 pl-4 rounded-2xl text-white", errors.phone ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-[#FFB347]")}
                           />
+                          {errors.phone && <p className="text-[10px] text-red-400 italic ml-1">This field is required</p>}
                         </div>
 
-                        <div className="md:col-span-2 space-y-4">
-                          <label className="text-[10px] uppercase tracking-[0.2em] font-black text-white/40 ml-1">
+                        <div className="md:col-span-2 space-y-2">
+                          <label className={cn("text-[10px] uppercase tracking-[0.2em] font-black ml-1", errors.address ? "text-red-400" : "text-white/40")}>
                             Current Address
                           </label>
                           <Input
                             value={formData.address}
-                            onChange={(e) =>
-                              handleInputChange("address", e.target.value)
-                            }
+                            onChange={(e) => { handleInputChange("address", e.target.value); clearError("address"); }}
                             placeholder="Street, City, Province"
-                            className="bg-white/5 border-white/10 focus:border-[#FFB347] h-14 rounded-2xl text-white"
+                            className={cn("bg-white/5 h-12 pl-4 rounded-2xl text-white", errors.address ? "border-red-500 focus:border-red-500" : "border-white/10 focus:border-[#FFB347]")}
                           />
+                          {errors.address && <p className="text-[10px] text-red-400 italic ml-1">This field is required</p>}
                         </div>
                       </div>
                     </section>
@@ -827,3 +896,19 @@ export default function ApplicationForm() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

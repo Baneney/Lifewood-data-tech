@@ -1251,11 +1251,9 @@ import { capitalize } from "@/helpers/capitalize";
 import { useAdmin } from "@/hooks/use-admin";
 
 // API Hooks
-import { usePostLogs } from "../api/logs/logPostAPI";
-import {
-  useApplications,
-  type ApplicationDataType,
-} from "../api/application/ApplicationFetchAPI";
+import { usePostLogs } from "../../api/logs/logPostAPI";
+import { useApplications, type ApplicationDataType } from "../../api/application/ApplicationFetchAPI";
+
 
 // Icons
 import {
@@ -1325,13 +1323,12 @@ const getColumns = (
   },
   {
     accessorKey: "date_submitted",
-    // header: "Date Applied",
     header: ({ column }) => (
       <div
         className="flex w-full gap-2 cursor-pointer"
         onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
       >
-        Date
+        Date Applied
         <ArrowUpDown size={15} />
       </div>
     ),

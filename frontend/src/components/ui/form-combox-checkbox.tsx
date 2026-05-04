@@ -312,7 +312,6 @@ export const FormComboCheckbox = React.memo(
         <PopoverTrigger asChild>
           <Button
             ref={triggerRef}
-            variant="outline"
             role="combobox"
             className={cn("w-full justify-between h-auto min-h-10", !selectedValues.length && "text-muted-foreground", className)}
           >

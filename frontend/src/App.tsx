@@ -52,7 +52,6 @@ function App() {
           <Route path="/projects/:id" element={<Projects />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/careers" element={<Careers />} />
-          <Route path="/apply" element={<ApplicationForm />} />
           <Route path="/go-back-now" element={<RestrictedPage />} />
         </Route>
         {/* Admin — no Navbar/Footer */}
@@ -65,6 +64,7 @@ function App() {
         </Route>
         {/* Auth — no Navbar/Footer */}
         <Route path="/admin/login" element={<SignIn />} />
+        <Route path="/apply" element={<ApplicationForm />} />
       </Routes>
     </BrowserRouter>
   );

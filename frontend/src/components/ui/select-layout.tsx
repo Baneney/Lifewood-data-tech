@@ -30,10 +30,8 @@ export function SelectLayout({ placeholder, label, className, options, value, wi
 
   return (
       <Select value={value} onValueChange={onChange}>
-          <SelectTrigger             className={cn(
-              "w-full py-5 px-3 bg-white ...",
-              // Target the placeholder state directly on the trigger
-              "data-placeholder:text-[#133020]/20 bg-white border border-[#133020]/10 rounded-md focus:border-[#FFB347] focus:ring-4 focus:ring-[#FFB347]/10 text-[#133020] text-xs font-bold", 
+          <SelectTrigger className={cn(
+              "w-full",
               className
             )}>
             {valueLabel && <p className="text-sm text-gray-600">{valueLabel + ": "} </p>}<SelectValue placeholder={placeholder} />

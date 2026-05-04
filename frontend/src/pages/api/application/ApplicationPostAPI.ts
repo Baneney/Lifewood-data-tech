@@ -15,30 +15,38 @@ export interface SubmissionData {
 }
 
 
-export async function usePostApplications(formData: SubmissionData, resumeUrl: string) {
+export async function usePostApplications(
+  formData: SubmissionData, 
+  resumeUrl: string, 
+  existingId?: string | null // New parameter
+) {
   
-  
-  
-    // 1. Insert into APPLICANT table
-  const { data: newApplicant, error: applicantError } = await supabase
-    .from('applicant')
-    .insert([
-      { 
-        fname: formData.fname,
-        lname: formData.lname,
-        email: formData.email,
-        phone: formData.phone,
-        address: formData.address,
-        gender: formData.gender,
-        dob: formatToDBDate(formData.dob),// Ensure DB date format
-        country: formData.country,
-        resume: resumeUrl 
-      }
-    ])
-    .select()
-    .single();
+  //global since it can be changed if the user is does not exist in the database
+  let applicantId = existingId;
 
-  if (applicantError) throw applicantError;
+  // 1. Only insert if the user doesn't exist yet
+  if (!applicantId) {
+    const { data: newApplicant, error: applicantError } = await supabase
+      .from('applicant')
+      .insert([
+        { 
+          fname: formData.fname,
+          lname: formData.lname,
+          email: formData.email,
+          phone: formData.phone,
+          address: formData.address,
+          gender: formData.gender,
+          dob: formatToDBDate(formData.dob),
+          country: formData.country,
+          resume: resumeUrl 
+        }
+      ])
+      .select()
+      .single();
+
+    if (applicantError) throw applicantError;
+    applicantId = newApplicant.id;
+  }
 
 
 
@@ -46,7 +54,7 @@ export async function usePostApplications(formData: SubmissionData, resumeUrl: s
 
   // 2. Prepare multiple rows for the APPLICATION table
   const applicationRows = formData.position.map(posId => ({
-    act_id: newApplicant.id,
+    act_id: applicantId,
     pos_id: posId,
   }));
 

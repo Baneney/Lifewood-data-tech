@@ -1,4 +1,5 @@
 import { supabase } from "@/supabaseClient";
+import { useState } from "react";
 
 // export async function checkExistingEmailPhone(
 //   email: string,
@@ -177,4 +178,83 @@ export async function checkexistingApplication(
     hasConflict: conflicts && conflicts.length > 0,
     conflictingTitles: conflicts?.map((c) => (c.position as any)?.title) || [],
   };
+}
+
+// =================================================== CHECK STATUS (APPLICANT) =====================================
+export type ApplicationTrackingDataType = {
+  id: string;
+  date_submitted: string;
+  applicant: {
+    id: string;
+    fname: string;
+    lname: string;
+    dob: string;
+    email: string;
+    phone: string;
+    address: string;
+    country: string;
+    resume: string;
+  };
+  position: {
+    id: string;
+    title: string;
+    desc: string;
+    status: string;
+  };
+  logs: {
+    id: string;
+    status: string;
+    datetime: string;
+    potential: boolean;
+    remarks: string;
+  }[];
+};
+
+export function useTrackApplication() {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const getApplicationById = async (
+    id: string,
+  ): Promise<ApplicationTrackingDataType | null> => {
+    const cleanId = id.trim();
+    if (!cleanId) return null;
+
+    setIsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from("application")
+        .select(
+          `
+          id, 
+          date_submitted,
+          applicant:act_id ( id, fname, lname, dob, email, phone, address, country, resume ),
+          position:pos_id ( id, title, desc, status ), 
+          logs ( 
+            id,
+            status, 
+            datetime,
+            potential,
+            remarks 
+          )
+        `,
+        )
+        .eq("id", cleanId)
+        .order("datetime", { foreignTable: "logs", ascending: false })
+        .single();
+
+      if (error) {
+        console.error("Database Error:", error.message);
+        return null;
+      }
+
+      return data as unknown as ApplicationTrackingDataType;
+    } catch (err) {
+      console.error("Fetch failed:", err);
+      return null;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return { getApplicationById, isLoading };
 }

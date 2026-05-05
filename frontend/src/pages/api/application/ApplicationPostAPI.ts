@@ -82,5 +82,5 @@ export async function usePostApplications(
 
   if (logError) throw logError;
 
-  return { success: true };
+  return { success: true, applications: insertedApplications };
 }

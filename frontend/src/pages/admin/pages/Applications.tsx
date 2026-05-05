@@ -1304,7 +1304,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
 const getColumns = (
   onUpdate: (
     appId: string,
-    data: { status: string; potential: boolean; remarks: string },
+    data: { status: string; potential: boolean; remarks: string; email: string; name: string; position: string; },
   ) => void,
 ): ColumnDef<ApplicationDataType>[] => [
   {
@@ -1564,6 +1564,9 @@ const getColumns = (
                     status: localStatus,
                     potential: localPotential,
                     remarks: localRemarks,
+                    email: app.applicant.email,
+                    name: `${app.applicant.fname} ${app.applicant.lname}`,
+                    position: app.position.title,
                   })
                 }
                 className="w-fit bg-[#046241] hover:bg-[#034E34] text-white text-xs font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/10 active:scale-95 flex items-center gap-2"
@@ -1597,6 +1600,9 @@ export default function Applications() {
     status: string;
     potential: boolean;
     remarks: string;
+    email: string; // Add this
+    name: string; // Add this
+    position: string;
   } | null>(null);
 
   // Filtered Data Logic
@@ -1628,7 +1634,7 @@ export default function Applications() {
   // Handlers
   const handleInitiateChange = (
     appId: string,
-    data: { status: string; potential: boolean; remarks: string },
+    data: { status: string; potential: boolean;  remarks: string; email: string; name: string; position: string; },
   ) => {
     setPendingUpdate({ id: appId, ...data });
     setConfirmOpen(true);
@@ -1645,8 +1651,29 @@ export default function Applications() {
         app_id: pendingUpdate.id,
         adm_id: adminId,
       });
+      
+      if (
+        pendingUpdate.status === "hired" ||
+        pendingUpdate.status === "not selected"
+      ) {
+        await fetch("http://localhost:5000/api/hired-or-rejected", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: pendingUpdate.email,
+            name: pendingUpdate.name,
+            status: pendingUpdate.status, // hired or not selected
+            position: pendingUpdate.position,
+            id: pendingUpdate.id,
+          }),
+        });
+      }
+        
       toast.success(`Status updated to ${pendingUpdate.status}`);
       setTimeout(() => window.location.reload(), 1000);
+
+      //refetch
+      // useApplications()
     } catch (error) {
       console.error("Update error:", error);
       toast.error("Failed to update status");

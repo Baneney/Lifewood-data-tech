@@ -1392,18 +1392,26 @@ export default function ApplicationForm() {
           "_",
         );
       const resumeUrl = await uploadFile(selectedFile, "resumes", folderPath);
-      await usePostApplications(formData, resumeUrl, check.applicantId);
+      
+      //insert on the database yoho!
+      const result = await usePostApplications(submissionData, resumeUrl, check.applicantId);
+
+
+      //use to track positions the user picked (for the email)
+      const applicationDetails = result.applications.map((app) => {
+        const title =
+          positions.find((p) => p.id === app.pos_id)?.title || "Specialist";
+        return { title, id: app.id };
+      });
 
       //triggers sending email to the user
-      await fetch(import.meta.env.VITE_SEND_EMAIL_FUNCTION_URL, {
+      await fetch("http://localhost:5000/api/send-confirmation", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          name: `${formData.fname} ${formData.lname}`,
           email: formData.email,
+          name: `${formData.fname} ${formData.lname}`,
+          applications: applicationDetails, // Pass the whole array
         }),
       });
 
@@ -1427,7 +1435,7 @@ export default function ApplicationForm() {
         className={cn(
           "fixed top-0 w-full z-50 px-12 transition-all duration-300",
           isScrolled
-            ? "py-4 bg-[#021a11]/40 backdrop-blur-xl" // REMOVED 'border-b' from here
+            ? "py-4 bg-[#021a11]/40 backdrop-blur-xl"
             : "py-8 bg-transparent",
         )}
       >

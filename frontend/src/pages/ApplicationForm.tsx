@@ -1194,6 +1194,7 @@ export default function ApplicationForm() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
+  const [countryCode, setCountryCode] = useState("(+63)");
   const totalSteps = 3;
   const stepLabels = ["Identity", "Contact", "Finalize"];
 
@@ -1236,6 +1237,15 @@ export default function ApplicationForm() {
     { id: "South Korea", name: "South Korea" },
   ];
 
+  // Define some common country code options
+  const countryCodeOptions = [
+    { id: "(+63)", name: "🇵🇭 +63" },
+    { id: "(+1)", name: "🇺🇸 +1" },
+    { id: "(+44)", name: "🇬🇧 +44" },
+    { id: "(+65)", name: "🇸🇬 +65" },
+    // ... add more as needed
+  ];
+
   const [errors, setErrors] = useState({
     position: false,
     fname: false,
@@ -1256,7 +1266,6 @@ export default function ApplicationForm() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
 
   const clearError = (field: keyof typeof errors) =>
     setErrors((prev) => ({ ...prev, [field]: false }));
@@ -1369,6 +1378,14 @@ export default function ApplicationForm() {
 
     setIsSubmitting(true);
     try {
+      // Combine the prefix and local number
+      const fullPhoneNumber = `${countryCode}${formData.phone.trim()}`;
+      // Create a version of formData that includes the concatenated number
+      const submissionData = {
+        ...formData,
+        phone: fullPhoneNumber,
+      };
+      
       const folderPath =
         `${formData.lname.trim()}_${formData.fname.trim()}`.replace(
           /\s+/g,
@@ -1410,7 +1427,7 @@ export default function ApplicationForm() {
         className={cn(
           "fixed top-0 w-full z-50 px-12 transition-all duration-300",
           isScrolled
-            ? "py-4 bg-[#021a11]/40 backdrop-blur-xl border-b border-white/5"
+            ? "py-4 bg-[#021a11]/40 backdrop-blur-xl" // REMOVED 'border-b' from here
             : "py-8 bg-transparent",
         )}
       >
@@ -1770,23 +1787,52 @@ export default function ApplicationForm() {
                           >
                             Phone Number
                           </label>
-                          <Input
-                            value={formData.phone}
-                            onChange={(e) => {
-                              handleInputChange("phone", e.target.value);
-                              clearError("phone");
-                            }}
-                            placeholder="+63 --- --- ----"
-                            className={cn(
-                              "bg-white/5 h-12 pl-4 rounded-2xl text-white",
-                              errors.phone
-                                ? "border-red-500 focus:border-red-500"
-                                : "border-white/10 focus:border-[#FFB347]",
-                            )}
-                          />
+
+                          <div className="flex gap-0 group">
+                            {/* Country Code Dropdown */}
+                            <div className="w-1/3 min-w-[100px]">
+                              <FormSelect
+                                placeholder="+63"
+                                value={countryCode}
+                                onValueChange={(val) => setCountryCode(val)}
+                                options={countryCodeOptions}
+                                className={cn(
+                                  "bg-white/5 py-6 pl-4 rounded-l-2xl rounded-r-none text-white border-r-0",
+                                  errors.phone
+                                    ? "border-red-500"
+                                    : "border-white/10",
+                                )}
+                              />
+                            </div>
+
+                            {/* Local Number Input */}
+                            <div className="flex-1">
+                              <Input
+                                type="tel"
+                                value={formData.phone}
+                                onChange={(e) => {
+                                  // Optional: allow only numbers
+                                  const value = e.target.value.replace(
+                                    /\D/g,
+                                    "",
+                                  );
+                                  handleInputChange("phone", value);
+                                  clearError("phone");
+                                }}
+                                placeholder="912 345 6789"
+                                className={cn(
+                                  "bg-white/5 h-12 pl-4 py-6 rounded-r-2xl rounded-l-none text-white",
+                                  errors.phone
+                                    ? "border-red-500 focus:border-red-500"
+                                    : "border-white/10 border-l-white/5 focus:border-[#FFB347]",
+                                )}
+                              />
+                            </div>
+                          </div>
+
                           {errors.phone && (
                             <p className="text-[10px] text-red-400 italic ml-1">
-                              This field is required
+                              Please enter your phone number
                             </p>
                           )}
                         </div>

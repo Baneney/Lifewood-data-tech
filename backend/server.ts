@@ -235,5 +235,102 @@ app.post('/api/hired-or-rejected', async (req, res) => {
 });
 
 
+
+
+// sending email from (contact page)
+app.post('/api/contact-inquiry', async (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  const mailOptions = {
+    from: `"${name}" <${process.env.SMTP_USER}>`, 
+    to: process.env.SMTP_USER, 
+    replyTo: email, 
+    subject: `[NEW INQUIRY] ${subject}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      </head>
+      <body style="background-color: #f5eedb; padding: 20px; margin: 0; -webkit-font-smoothing: antialiased; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+        <div style="max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e2dac5; border-radius: 24px; overflow: hidden; box-shadow: 0 15px 30px rgba(71, 54, 23, 0.05);">
+          
+          <div style="background-color: #034E34; height: 6px; width: 100%;"></div>
+
+          <div style="padding: 40px 40px 30px 40px;">
+            <h2 style="color: #021a11; font-size: 22px; font-weight: 700; margin: 0 0 24px 0; letter-spacing: -0.5px;">
+              New message from the Contact Page
+            </h2>
+
+            <div style="background-color: #faf7ef; border: 1px solid #f0e9d6; border-radius: 16px; padding: 20px; margin-bottom: 30px;">
+              <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+                <tr>
+                  <td style="padding-bottom: 15px;">
+                    <div style="font-size: 10px; font-weight: 800; color: #417256; text-transform: uppercase; letter-spacing: 1px;">Sender Name</div>
+                    <div style="font-size: 14px; color: #021a11; font-weight: 600;">${name}</div>
+                  </td>
+                  <td style="padding-bottom: 15px;">
+                    <div style="font-size: 10px; font-weight: 800; color: #417256; text-transform: uppercase; letter-spacing: 1px;">Email Address</div>
+                    <div style="font-size: 14px; color: #417256; font-weight: 600;">${email}</div>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="2" style="padding-top: 15px; border-top: 1px solid #f0e9d6;">
+                    <div style="font-size: 10px; font-weight: 800; color: #417256; text-transform: uppercase; letter-spacing: 1px;">Subject Line</div>
+                    <div style="font-size: 14px; color: #021a11; font-weight: 600;">${subject}</div>
+                  </td>
+                </tr>
+              </table>
+            </div>
+
+            <div style="padding-left: 20px; border-left: 4px solid #FFC370;">
+              <div style="font-size: 10px; font-weight: 800; color: #417256; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;">Message Content</div>
+              <p style="font-size: 15px; color: #1a2e24; line-height: 1.6; margin: 0;">
+                ${message}
+              </p>
+            </div>
+          </div>
+
+          <div style="padding: 30px 40px; background-color: #faf7ef; border-top: 1px solid #f0e9d6;">
+            <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse: collapse;">
+              <tr>
+                <td style="vertical-align: middle;">
+                   <img src="https://lknmoriyqfrhhccuikut.supabase.co/storage/v1/object/public/resumes/randomLogo/Lifewood-Logo.png"
+                        alt="Lifewood Logo" style="height: 20px; width: auto; opacity: 0.8;">
+                </td>
+                <td style="text-align: right; vertical-align: middle;">
+                  <p style="margin: 0; font-size: 11px; color: #a39c89; font-weight: 600; line-height: 1.4;">
+                    Sent via Lifewood Admin Portal<br>
+                    <span style="color: #417256;">${new Date().toLocaleDateString()}</span>
+                  </p>
+                </td>
+              </tr>
+            </table>
+            
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #f0e9d6; text-align: center;">
+              <p style="margin: 0; font-size: 11px; color: #a39c89; font-weight: 500;">
+                To reply to this inquiry, simply hit <strong style="color: #034E34;">Reply</strong> in your mail client.
+              </p>
+            </div>
+          </div>
+
+        </div>
+      </body>
+      </html>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    res.status(200).json({ success: true });
+  } catch (error) {
+    console.error('Mail Error:', error);
+    res.status(500).json({ error: 'Mail error' });
+  }
+});
+
+
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Backend running on port ${PORT}`));

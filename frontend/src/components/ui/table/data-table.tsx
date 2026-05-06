@@ -100,16 +100,16 @@ export function DataTable<TData, TValue>({
       <div className="relative overflow-hidden">
         {/* Fixed Header */}
         {header && (
-          <div className="bg-emerald-600/20 relative z-10">
+          <div className="bg-[#046241] relative z-10">
             <Table className="table-fixed">
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="h-13">
+                  <TableRow key={headerGroup.id} className="h-12 hover:bg-transparent border-none">
                     {headerGroup.headers.map((header) => (
                       <TableHead
                         key={header.id}
                         style={{ width: header.getSize() }}
-                        className={cn("text-left pl-4 font-bold", headerClassName)}
+                        className={cn("text-left pl-4 font-semibold text-white text-xs uppercase tracking-wider", headerClassName)}
                       >
                         {header.isPlaceholder
                           ? null
@@ -150,16 +150,19 @@ export function DataTable<TData, TValue>({
                     <TableRow
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
-                      className={!header ? "border-none" : ""}
+                      className={cn(
+                        "transition-colors hover:bg-[#046241]/5 border-slate-100",
+                        !header && "border-none",
+                        index % 2 === 1 && "bg-slate-50/60",
+                      )}
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
                           style={{ width: cell.column.getSize() }}
                           className={cn(
-                            "text-left font-medium text-gray-700 pl-5 py-4",
+                            "text-left text-slate-700 pl-5 py-3.5",
                             cellClassName,
-                            `${index % 2 == 1 && "bg-[#417256]/4"}`,
                           )}
                         >
                           {flexRender(
@@ -174,17 +177,18 @@ export function DataTable<TData, TValue>({
                   <TableRow>
                     <TableCell
                       colSpan={columns?.length}
-                      className="h-24 text-center"
+                      className="h-32 text-center text-slate-400 text-sm"
                     >
-                      No results.
+                      No results found.
                     </TableCell>
                   </TableRow>
                 )
               ) : (
                 <TableRow>
-                  <TableCell colSpan={columns?.length} className="h-24">
-                    <div className="w-full h-full flex items-center justify-center">
-                      <Loader2 className="animate-spin opacity-50" />
+                  <TableCell colSpan={columns?.length} className="h-32">
+                    <div className="w-full h-full flex items-center justify-center gap-2 text-slate-400 text-sm">
+                      <Loader2 className="animate-spin h-4 w-4 text-[#046241]" />
+                      <span>Loading...</span>
                     </div>
                   </TableCell>
                 </TableRow>

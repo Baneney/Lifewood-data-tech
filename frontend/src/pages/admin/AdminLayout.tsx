@@ -286,9 +286,8 @@
 //   )
 // }
 
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
 
-//assets
 import {
   Sidebar,
   SidebarContent,
@@ -301,42 +300,198 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarProvider,
-  SidebarRail,
   SidebarTrigger,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
-//icons
 import {
   LayoutDashboard,
   Users,
   Briefcase,
-  Bell,
   LogOut,
   ChevronRight,
   Settings,
 } from "lucide-react";
 
-//assets
+import { supabase } from "@/supabaseClient";
+
 import logo from "@/assets/Lifewood-LogoV2.png";
 
 const NAV_MAIN = [
-  { label: "Overview", to: "/admin", icon: LayoutDashboard, end: true },
+  { label: "Overview",     to: "/admin",              icon: LayoutDashboard, end: true },
   { label: "Applications", to: "/admin/applications", icon: Users },
-  { label: "Positions", to: "/admin/positions", icon: Briefcase },
+  { label: "Positions",    to: "/admin/positions",    icon: Briefcase },
 ];
 
 const NAV_BOTTOM = [
   { label: "Settings", to: "/admin/settings", icon: Settings },
-  { label: "Back to Site", to: "/", icon: LogOut },
 ];
+
+function SidebarNav() {
+  const { pathname } = useLocation();
+  const { state } = useSidebar();
+  const navigate = useNavigate();
+  const collapsed = state === "collapsed";
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate("/", { replace: true });
+  };
+
+  return (
+    <>
+      {/* Header */}
+      <SidebarHeader
+        className={cn(
+          "flex flex-row items-center border-b border-white/5 bg-[#022c1d] transition-all duration-200",
+          collapsed ? "h-16 justify-center px-0" : "h-20 justify-between px-5",
+        )}
+      >
+        {!collapsed && (
+          <div className="flex items-center gap-3 overflow-hidden">
+            <img src={logo} alt="Lifewood" className="h-8 w-auto shrink-0" />
+          </div>
+        )}
+        <SidebarTrigger
+          className={cn(
+            "text-white/40 hover:text-white hover:bg-white/10 rounded-lg transition-all duration-200",
+            collapsed && "mx-auto",
+          )}
+        />
+      </SidebarHeader>
+
+      {/* Main Nav */}
+      <SidebarContent className="bg-[#022c1d] px-0 py-6">
+        <SidebarGroup className="p-0">
+          {!collapsed && (
+            <SidebarGroupLabel className="text-white/20 text-[9px] font-black uppercase tracking-[0.25em] px-6 mb-3">
+              Management
+            </SidebarGroupLabel>
+          )}
+          <SidebarMenu className="gap-0.5">
+            {NAV_MAIN.map(({ label, to, icon: Icon, end }) => {
+              const active = end ? pathname === to : pathname.startsWith(to);
+              return (
+                <SidebarMenuItem key={to}>
+                  <SidebarMenuButton
+                    asChild
+                    isActive={active}
+                    tooltip={collapsed ? label : undefined}
+                    size="lg"
+                    className={cn(
+                      "relative rounded-none h-12 transition-all duration-200 bg-transparent! border-none",
+                      collapsed ? "justify-center px-0 w-full" : "px-6",
+                      active
+                        ? "text-[#FFB347]"
+                        : "text-white/50 hover:text-white hover:bg-white/5",
+                    )}
+                  >
+                    <NavLink
+                      to={to}
+                      end={end}
+                      className={cn(
+                        "flex items-center w-full",
+                        collapsed ? "justify-center" : "gap-4",
+                      )}
+                    >
+                      {/* Active left bar — only in expanded */}
+                      {active && !collapsed && (
+                        <span className="absolute left-0 w-0.75 h-5 bg-[#FFB347] rounded-r-full" />
+                      )}
+                      {/* Active dot — only in collapsed */}
+                      {active && collapsed && (
+                        <span className="absolute right-1.5 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-[#FFB347]" />
+                      )}
+                      <Icon
+                        size={collapsed ? 20 : 18}
+                        strokeWidth={active ? 2.5 : 2}
+                        className={
+                          active
+                            ? "drop-shadow-[0_0_6px_rgba(255,179,71,0.5)]"
+                            : ""
+                        }
+                      />
+                      {!collapsed && (
+                        <span
+                          className={cn(
+                            "text-[13px] tracking-wide",
+                            active ? "font-bold" : "font-medium",
+                          )}
+                        >
+                          {label}
+                        </span>
+                      )}
+                    </NavLink>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              );
+            })}
+          </SidebarMenu>
+        </SidebarGroup>
+      </SidebarContent>
+
+      {/* Footer */}
+      <SidebarFooter className="p-0 bg-[#011f15] border-t border-white/5">
+        <SidebarMenu className="gap-0">
+          {NAV_BOTTOM.map(({ label, to, icon: Icon }) => (
+            <SidebarMenuItem key={to}>
+              <SidebarMenuButton
+                asChild
+                tooltip={collapsed ? label : undefined}
+                size="lg"
+                className={cn(
+                  "rounded-none h-12 bg-transparent! transition-all duration-200",
+                  collapsed ? "justify-center px-0 w-full" : "px-6",
+                  "text-white/30 hover:bg-white/5 hover:text-white/60",
+                )}
+              >
+                <NavLink
+                  to={to}
+                  className={cn(
+                    "flex items-center w-full",
+                    collapsed ? "justify-center" : "gap-3",
+                  )}
+                >
+                  <Icon size={17} />
+                  {!collapsed && (
+                    <span className="text-[11px] font-bold uppercase tracking-widest">
+                      {label}
+                    </span>
+                  )}
+                </NavLink>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          ))}
+
+          {/* Logout */}
+          <SidebarMenuItem>
+            <button
+              onClick={handleLogout}
+              className={cn(
+                "flex items-center w-full h-12 rounded-none transition-all duration-200 cursor-pointer text-white/30 hover:bg-red-500/10 hover:text-red-400",
+                collapsed ? "justify-center px-0" : "gap-3 px-6",
+              )}
+            >
+              <LogOut size={17} />
+              {!collapsed && (
+                <span className="text-[11px] font-bold uppercase tracking-widest">
+                  Logout
+                </span>
+              )}
+            </button>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </>
+  );
+}
 
 export default function AdminLayout() {
   const { pathname } = useLocation();
 
-  // Logic for generating the page title and breadcrumb
-  const pathSegments = pathname.split("/").filter(Boolean);
   const crumb =
     pathname === "/admin"
       ? "Overview"
@@ -347,133 +502,31 @@ export default function AdminLayout() {
       <SidebarProvider>
         <Sidebar
           collapsible="icon"
-          // Using a slightly deeper green for the main rail and removing the borders
           className="border-none bg-[#022c1d] text-white"
         >
-          {/* Header background set to match for a seamless look */}
-          <SidebarHeader className="h-24 flex-row items-center justify-between px-6 bg-[#022c1d]">
-            <div className="flex items-center gap-3 overflow-hidden group-data-[state=collapsed]:hidden">
-              <img
-                src={logo}
-                alt="Lifewood"
-                className="h-9 w-auto shrink-0" // Removed brightness-0 invert
-              />
-            </div>
-            <SidebarTrigger className="text-white/30 hover:bg-white/10 hover:text-white" />
-          </SidebarHeader>
-
-          <SidebarContent className="px-0 py-4 bg-[#022c1d]">
-            <SidebarGroup>
-              <SidebarGroupLabel className="text-white/20 text-[10px] font-black uppercase px-8 mb-4 tracking-[0.2em]">
-                Main Management
-              </SidebarGroupLabel>
-              <SidebarMenu className="gap-1">
-                {NAV_MAIN.map(({ label, to, icon: Icon, end }) => {
-                  const active = end
-                    ? pathname === to
-                    : pathname.startsWith(to);
-                  return (
-                    <SidebarMenuItem key={to}>
-                      <SidebarMenuButton
-                        asChild
-                        isActive={active}
-                        tooltip={label}
-                        size="lg"
-                        // Changed from a "button block" to a "tab" style
-                        className={`relative transition-all duration-200 rounded-none px-8 h-12 w-full border-none !bg-transparent ${
-                          active
-                            ? "text-[#FFB347]"
-                            : "text-white/50 hover:text-white hover:bg-white/5"
-                        }`}
-                      >
-                        <NavLink
-                          to={to}
-                          end={end}
-                          className="flex items-center gap-4 w-full"
-                        >
-                          {/* The Active Indicator Line */}
-                          {active && (
-                            <div className="absolute left-0 w-1 h-6 bg-[#FFB347] rounded-r-full" />
-                          )}
-
-                          <Icon
-                            size={20}
-                            strokeWidth={active ? 2.5 : 2}
-                            className={
-                              active
-                                ? "drop-shadow-[0_0_8px_rgba(255,179,71,0.4)]"
-                                : ""
-                            }
-                          />
-                          <span
-                            className={`text-[14px] tracking-wide ${active ? "font-bold" : "font-medium"}`}
-                          >
-                            {label}
-                          </span>
-                        </NavLink>
-                      </SidebarMenuButton>
-                    </SidebarMenuItem>
-                  );
-                })}
-              </SidebarMenu>
-            </SidebarGroup>
-          </SidebarContent>
-
-          <SidebarFooter className="p-0 bg-[#011f15]">
-            <SidebarMenu className="gap-0">
-              {NAV_BOTTOM.map(({ label, to, icon: Icon }) => (
-                <SidebarMenuItem key={to}>
-                  <SidebarMenuButton
-                    asChild
-                    tooltip={label}
-                    className="text-white/30 hover:bg-red-500/10 hover:text-red-400 transition-all rounded-none px-8 h-14 !bg-transparent"
-                  >
-                    <NavLink to={to} className="flex items-center gap-3">
-                      <Icon size={18} />
-                      <span className="text-[11px] font-bold uppercase tracking-widest">
-                        {label}
-                      </span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarFooter>
-          <SidebarRail />
+          <SidebarNav />
         </Sidebar>
 
         <SidebarInset className="bg-[#F8FAF9]">
-          <header className="sticky top-0 z-20 flex h-20 items-center gap-4 border-b border-emerald-900/5 bg-white/80 backdrop-blur-md px-10">
-            {/* Subtle Breadcrumbs */}
-            <div className="flex flex-col gap-0.5">
-              {/* Subtle Breadcrumbs */}
-              <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-900/30">
-                <span className="hover:text-emerald-900/60 cursor-default transition-colors">
-                  Admin
-                </span>
-                <ChevronRight size={10} strokeWidth={3} />
-                <span className="text-[#FFB347]">{crumb}</span>
-              </nav>
-            </div>
+          <header className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b border-slate-100 bg-white/90 backdrop-blur-md px-8">
+            <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-emerald-900/30">
+              <span>Admin</span>
+              <ChevronRight size={10} strokeWidth={3} />
+              <span className="text-[#046241] capitalize">{crumb}</span>
+            </nav>
 
-            <div className="ml-auto flex items-center gap-6">
-              <div className="flex items-center gap-4 pl-6 border-l border-gray-100">
-                <div className="flex flex-col items-end">
-                  <span className="text-sm font-bold text-[#034E34]">
-                    Administrator
-                  </span>
-                  <span className="text-[9px] text-emerald-600 font-bold uppercase tracking-wider">
-                    Online
-                  </span>
-                </div>
-                <div className="w-10 h-10 rounded-xl bg-[#034E34] flex items-center justify-center text-[#FFB347] font-black shadow-md border border-white/10 text-xs">
-                  AD
-                </div>
+            <div className="ml-auto flex items-center gap-4 pl-6 border-l border-gray-100">
+              <div className="flex flex-col items-end">
+                <span className="text-sm font-bold text-[#034E34]">Administrator</span>
+                <span className="text-[9px] text-emerald-600 font-bold uppercase tracking-wider">Online</span>
+              </div>
+              <div className="w-9 h-9 rounded-xl bg-[#034E34] flex items-center justify-center text-[#FFB347] font-black shadow-md text-xs">
+                AD
               </div>
             </div>
           </header>
 
-          <main className="p-10">
+          <main className="p-8">
             <div className="max-w-6xl mx-auto">
               <Outlet />
             </div>

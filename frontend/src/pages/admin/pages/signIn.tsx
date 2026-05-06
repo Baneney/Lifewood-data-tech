@@ -1,6 +1,6 @@
 
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Eye, EyeOff, ArrowRight, Loader2 } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -14,14 +14,13 @@ export default function Login() {
   const navigate = useNavigate();
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
-
-
+  const [searchParams] = useSearchParams();
+  const [isAuthorized, setIsAuthorized] = useState(false); // New state
 
   const { formData, handleInputChange } = useForm({
-    email: "", 
-    password: "" 
+    email: "",
+    password: "",
   });
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +38,24 @@ export default function Login() {
     }
   };
 
-  
+  useEffect(() => {
+    const secretKey = searchParams.get("v");
+    const VITE_KEY = import.meta.env.VITE_EYK;
+
+    if (secretKey === VITE_KEY) {
+      setIsAuthorized(true);
+    } else {
+      // replace: true prevents them from clicking "Back" to try again
+      navigate("/go-back-now", { replace: true });
+    }
+  }, [searchParams, navigate]);
+
+  // ── CRITICAL: Safety Gate ──
+  // If not authorized, return null so the login UI never "flashes" on screen
+  if (!isAuthorized) {
+    return null;
+  }
+
   return (
     // Updated Background Color to Deep Green
     <div className="min-h-screen bg-[#021a11] flex items-center justify-center overflow-hidden relative px-4">

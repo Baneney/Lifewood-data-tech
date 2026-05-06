@@ -25,9 +25,9 @@ export default function ProtectedRoute() {
 
   if (loading) return null; // Or a loading spinner
 
-  // If no session, redirect to your restricted page
+  // If no session, redirect to home
   if (!session) {
-    return <Navigate to="/go-back-now" replace />;
+    return <Navigate to="/" replace />;
   }
 
   // If session exists, render the child routes (AdminLayout, etc.)

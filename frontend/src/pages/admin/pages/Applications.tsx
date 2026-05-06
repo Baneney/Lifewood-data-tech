@@ -1268,6 +1268,10 @@ import {
   Filter,
   ArrowUpDown,
   Cake,
+  Users,
+  Clock,
+  Star,
+  ListFilter,
 } from "lucide-react";
 
 const statusConfig: Record<string, { label: string; className: string }> = {
@@ -1320,6 +1324,14 @@ const getColumns = (
     accessorKey: "position.title",
     header: "Position Applied",
     size: 350,
+    cell: ({ row }) => (
+      <span
+        className="block truncate"
+        title={row.original.position.title}
+      >
+        {row.original.position.title}
+      </span>
+    ),
   },
   {
     accessorKey: "date_submitted",
@@ -1591,6 +1603,7 @@ export default function Applications() {
   // Search and Filter State
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
+  const [cardFilter, setCardFilter] = useState<"all" | "pending" | "shortlisted" | "potential">("all");
   const [currentPage, setCurrentPage] = useState(1);
 
   // Modal State
@@ -1605,11 +1618,16 @@ export default function Applications() {
     position: string;
   } | null>(null);
 
-  // Filtered Data Logic
+  // Card counts derived from full applications list
+  const totalCount = applications.length;
+  const pendingCount = useMemo(() => applications.filter((a) => a.current_status?.toLowerCase() === "pending").length, [applications]);
+  const shortlistedCount = useMemo(() => applications.filter((a) => a.current_status?.toLowerCase() === "shortlisted").length, [applications]);
+  const potentialCount = useMemo(() => applications.filter((a) => a.logs?.[0]?.potential === true).length, [applications]);
+
+  // Filtered + sorted Data Logic
   const filteredData = useMemo(() => {
-    return applications.filter((app) => {
-      const fullName =
-        `${app.applicant.fname} ${app.applicant.lname}`.toLowerCase();
+    const filtered = applications.filter((app) => {
+      const fullName = `${app.applicant.fname} ${app.applicant.lname}`.toLowerCase();
       const role = app.position.title?.toLowerCase() || "";
       const search = searchTerm.toLowerCase();
       const matchesSearch = fullName.includes(search) || role.includes(search);
@@ -1618,12 +1636,27 @@ export default function Applications() {
         app.current_status?.toLowerCase() === statusFilter.toLowerCase();
       return matchesSearch && matchesStatus;
     });
-  }, [applications, searchTerm, statusFilter]);
+
+    // Sort: card-filtered rows bubble to top
+    if (cardFilter === "potential") {
+      return [...filtered].sort((a, b) =>
+        (b.logs?.[0]?.potential ? 1 : 0) - (a.logs?.[0]?.potential ? 1 : 0)
+      );
+    }
+    if (cardFilter === "pending" || cardFilter === "shortlisted") {
+      return [...filtered].sort((a, b) => {
+        const aMatch = a.current_status?.toLowerCase() === cardFilter ? 1 : 0;
+        const bMatch = b.current_status?.toLowerCase() === cardFilter ? 1 : 0;
+        return bMatch - aMatch;
+      });
+    }
+    return filtered;
+  }, [applications, searchTerm, statusFilter, cardFilter]);
 
   // Reset to page 1 when filters change
   useMemo(() => {
     setCurrentPage(1);
-  }, [searchTerm, statusFilter]);
+  }, [searchTerm, statusFilter, cardFilter]);
 
   // Pagination
   const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
@@ -1685,19 +1718,103 @@ export default function Applications() {
 
   const columns = getColumns(handleInitiateChange);
 
+  const cards = [
+    { key: "all" as const,         label: "Total",       value: totalCount,       sub: "All applications",      icon: Users },
+    { key: "pending" as const,     label: "Needs Review", value: pendingCount,     sub: "Awaiting action",       icon: Clock },
+    { key: "shortlisted" as const, label: "Shortlisted",  value: shortlistedCount, sub: "Ready for next step",   icon: ListFilter },
+    { key: "potential" as const,   label: "High Potential", value: potentialCount, sub: "Flagged best fit",      icon: Star },
+  ];
+
   return (
     <div className="space-y-6">
-      <div className="pb-13">
+      <div className="pb-6">
         <h1 className="text-4xl font-bold text-[#046241] tracking-tight">
           Application Tracker
         </h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <p className="text-slate-400 text-sm mt-1">
           Manage and track job applications across positions
         </p>
       </div>
 
+      {/* STAT CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 pb-10">
+        {cards.map(({ key, label, value, sub, icon: Icon }) => {
+          const isActive = cardFilter === key;
+          return (
+            <div
+              key={key}
+              onClick={() => setCardFilter(isActive ? "all" : key)}
+              className={cn(
+                "group relative bg-white rounded-2xl border p-6 shadow-sm hover:shadow-xl hover:shadow-[#034E34]/10 hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-pointer",
+                isActive
+                  ? "border-[#034E34]/40 ring-2 ring-[#034E34]/20"
+                  : "border-gray-100",
+              )}
+            >
+              <div className="absolute -right-4 -bottom-4 w-20 h-20 bg-gray-50 rounded-full group-hover:scale-[3] group-hover:bg-[#FFB347]/5 transition-all duration-700 opacity-50" />
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="relative">
+                    <div
+                      className={cn(
+                        "w-12 h-12 rounded-xl flex items-center justify-center shadow-md transition-transform duration-300 group-hover:rotate-6",
+                        isActive ? "bg-[#FFB347]" : "bg-[#034E34]",
+                      )}
+                    >
+                      <Icon
+                        size={20}
+                        className={
+                          isActive ? "text-[#034E34]" : "text-[#FFB347]"
+                        }
+                      />
+                    </div>
+                    <div className="absolute inset-0 bg-[#FFB347] blur-xl opacity-0 group-hover:opacity-20 transition-opacity" />
+                  </div>
+                  <div className="flex items-center gap-1.5 bg-[#034E34]/5 px-2.5 py-1 rounded-full border border-[#034E34]/10">
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#034E34] opacity-75" />
+                      <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#034E34]" />
+                    </span>
+                    <span className="text-[9px] font-black text-[#034E34] uppercase tracking-widest">
+                      Live
+                    </span>
+                  </div>
+                </div>
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span
+                    className={cn(
+                      "text-4xl font-black tracking-tighter italic transition-colors",
+                      isActive
+                        ? "text-[#034E34]"
+                        : "text-gray-900 group-hover:text-[#034E34]",
+                    )}
+                  >
+                    {value}
+                  </span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#FFB347] mb-1" />
+                </div>
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                  {label}
+                </p>
+                <div className="flex flex-col gap-1.5">
+                  <div
+                    className={cn(
+                      "h-0.5 bg-[#FFB347] rounded-full transition-all duration-500",
+                      isActive ? "w-full" : "w-6 group-hover:w-full",
+                    )}
+                  />
+                  <p className="text-[10px] text-[#034E34]/60 font-bold uppercase tracking-tight italic">
+                    {sub}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
       {/* Search and Filter Toolbar */}
-      <div className="flex flex-col md:flex-row gap-4 items-center justify-between bg-white rounded-xl">
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between rounded-xl">
         <div className="relative w-full md:w-96">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <Input

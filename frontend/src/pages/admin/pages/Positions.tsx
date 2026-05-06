@@ -898,7 +898,7 @@ import {
 import { toast } from "sonner";
 
 //icons
-import { Edit, Loader2, Plus, Search } from "lucide-react";
+import { Edit, Loader2, Plus, Search, Briefcase, CheckCircle, XCircle, FileText, AlertCircle } from "lucide-react";
 
 //helper/hooks
 import { useForm } from "@/hooks/useForm";
@@ -921,6 +921,12 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   closed: {
     label: "Closed",
     className: "border-red-100 bg-red-50 text-red-600",
+  },
+  urgent: {
+    label: "Urgent",
+    // Using Amber: It stands out as a priority but is distinct from Red (Closed)
+    className:
+      "border-amber-200 bg-amber-50 text-amber-700 animate-pulse-subtle",
   },
 };
 
@@ -951,12 +957,12 @@ const columns = (
         {row.getValue("desc")}
       </span>
     ),
-    size: 350,
+    size: 400,
   },
   {
     accessorKey: "status",
     header: "Status",
-    size: 120,
+    size: 50,
     cell: ({ row }) => {
       const status = (row.getValue("status") as string)?.toLowerCase();
       const config = statusConfig[status] ?? {
@@ -979,7 +985,7 @@ const columns = (
   {
     id: "actions",
     header: () => (
-      <div className="text-center font-bold text-[#046241]">Actions</div>
+      <div className="text-center">Actions</div>
     ),
     size: 100,
     cell: ({ row }) => (
@@ -1043,6 +1049,7 @@ export default function Positions() {
     desc: false,
     status: false,
   });
+  
 
 
 
@@ -1154,16 +1161,176 @@ export default function Positions() {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const currentTableData = filteredPositions.slice(startIndex, endIndex);
 
+  const totalPositions = positions.length;
+  const openCount = positions.filter((p) => p.status?.toLowerCase() === "open").length;
+  const closedCount = positions.filter((p) => p.status?.toLowerCase() === "closed").length;
+  const urgentCount = positions.filter((p) => p.status?.toLowerCase() === "urgent").length;
+
+
+  const cardData = [
+    {
+      label: "Total Positions",
+      value: totalPositions,
+      sub: "All positions listed",
+      icon: Briefcase,
+      type: "total",
+    },
+    {
+      label: "Urgent",
+      value: urgentCount,
+      sub: "Requires immediate attention",
+      icon: AlertCircle,
+      type: "urgent",
+    }, // Replacing Draft
+    {
+      label: "Open",
+      value: openCount,
+      sub: "Actively accepting",
+      icon: CheckCircle,
+      type: "open",
+    },
+    {
+      label: "Closed",
+      value: closedCount,
+      sub: "No longer accepting",
+      icon: XCircle,
+      type: "closed",
+    },
+  ];
   return (
     <div className="space-y-4">
       {/* 1. TOP HEADER SECTION */}
-      <div className="pb-13">
+      <div className="pb-6">
         <h1 className="text-4xl font-bold text-[#046241] tracking-tight">
           Positions Management
         </h1>
-        <p className="text-slate-500 text-sm mt-1">
+        <p className="text-slate-400 text-sm mt-1">
           Review and manage the current available positions.
         </p>
+      </div>
+
+      {/* STAT CARDS */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 pb-10">
+        {cardData.map(({ label, value, sub, icon: Icon, type }) => {
+          const isUrgent = type === "urgent";
+
+          return (
+            <div
+              key={label}
+              className={cn(
+                "group relative bg-white rounded-2xl border border-gray-100 p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-default",
+                // Distinction: Subtle amber shadow/border ONLY for the urgent card if there are urgent items
+                isUrgent &&
+                  value > 0 &&
+                  "border-amber-200 shadow-md shadow-amber-500/10",
+              )}
+            >
+              {/* Background decoration - turns amber if urgent */}
+              <div
+                className={cn(
+                  "absolute -right-4 -bottom-4 w-20 h-20 bg-gray-50 rounded-full group-hover:scale-[3] transition-all duration-700 opacity-50",
+                  isUrgent && "group-hover:bg-amber-50",
+                )}
+              />
+
+              <div className="relative z-10">
+                <div className="flex items-start justify-between mb-6">
+                  <div className="relative">
+                    {/* Icon Box: Green by default, Amber if Urgent with value */}
+                    <div
+                      className={cn(
+                        "w-12 h-12 bg-[#034E34] rounded-xl flex items-center justify-center shadow-md shadow-[#034E34]/20 group-hover:rotate-6 transition-transform duration-300",
+                        isUrgent &&
+                          value > 0 &&
+                          "bg-amber-500 shadow-amber-500/20",
+                      )}
+                    >
+                      <Icon
+                        size={20}
+                        className={cn(
+                          "text-[#FFB347]",
+                          isUrgent && value > 0 && "text-white",
+                        )}
+                      />
+                    </div>
+                    <div
+                      className={cn(
+                        "absolute inset-0 bg-[#FFB347] blur-xl opacity-0 group-hover:opacity-20 transition-opacity",
+                        isUrgent && "bg-amber-400",
+                      )}
+                    />
+                  </div>
+
+                  {/* Top Right Badge: Shows "Priority" for Urgent or "Live" for others */}
+                  <div
+                    className={cn(
+                      "flex items-center gap-1.5 bg-[#034E34]/5 px-2.5 py-1 rounded-full border border-[#034E34]/10",
+                      isUrgent && value > 0 && "bg-amber-50 border-amber-200",
+                    )}
+                  >
+                    <span className="relative flex h-1.5 w-1.5">
+                      <span
+                        className={cn(
+                          "animate-ping absolute inline-flex h-full w-full rounded-full bg-[#034E34] opacity-75",
+                          isUrgent && "bg-amber-500",
+                        )}
+                      />
+                      <span
+                        className={cn(
+                          "relative inline-flex rounded-full h-1.5 w-1.5 bg-[#034E34]",
+                          isUrgent && "bg-amber-500",
+                        )}
+                      />
+                    </span>
+                    <span
+                      className={cn(
+                        "text-[9px] font-black text-[#034E34] uppercase tracking-widest",
+                        isUrgent && value > 0 && "text-amber-600",
+                      )}
+                    >
+                      {isUrgent ? "Priority" : "Live"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Value and Label */}
+                <div className="flex items-baseline gap-1 mb-1">
+                  <span
+                    className={cn(
+                      "text-4xl font-black text-gray-900 tracking-tighter italic group-hover:text-[#034E34] transition-colors",
+                      isUrgent && value > 0 && "group-hover:text-amber-600",
+                    )}
+                  >
+                    {value}
+                  </span>
+                  <span
+                    className={cn(
+                      "w-1.5 h-1.5 rounded-full bg-[#FFB347] mb-1",
+                      isUrgent && value > 0 && "bg-amber-500",
+                    )}
+                  />
+                </div>
+
+                <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3">
+                  {label}
+                </p>
+
+                {/* Footer Decoration and Subtext */}
+                <div className="flex flex-col gap-1.5">
+                  <div
+                    className={cn(
+                      "h-[2px] w-6 bg-[#FFB347] group-hover:w-full transition-all duration-500 rounded-full",
+                      isUrgent && value > 0 && "bg-amber-500",
+                    )}
+                  />
+                  <p className="text-[10px] text-[#034E34]/60 font-bold uppercase tracking-tight italic">
+                    {sub}
+                  </p>
+                </div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       {/* 2. ACTION ROW (Search Left, Button Right) */}
@@ -1199,7 +1366,7 @@ export default function Positions() {
               <SelectItem value="all">All Status</SelectItem>
               <SelectItem value="open">Open</SelectItem>
               <SelectItem value="closed">Closed</SelectItem>
-              <SelectItem value="draft">Draft</SelectItem>
+              <SelectItem value="urgent">Urgent</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -1222,8 +1389,8 @@ export default function Positions() {
         />
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between px-4 py-4 border-t border-slate-100">
-          <div className="text-sm text-slate-500">
+        <div className="flex items-center justify-between px-4 py-3 border-t border-slate-100">
+          <div className="text-xs text-slate-400">
             Showing {startIndex + 1} to{" "}
             {Math.min(endIndex, filteredPositions.length)} of{" "}
             {filteredPositions.length} entries
@@ -1256,6 +1423,10 @@ export default function Positions() {
                           e.preventDefault();
                           setCurrentPage(page);
                         }}
+                        className={cn(
+                          currentPage === page &&
+                            "bg-[#046241] text-white border-[#046241] hover:bg-[#046241]/90 hover:text-white",
+                        )}
                       >
                         {page}
                       </PaginationLink>
@@ -1345,7 +1516,7 @@ export default function Positions() {
                     <SelectContent>
                       <SelectItem value="open">Open</SelectItem>
                       <SelectItem value="closed">Closed</SelectItem>
-                      <SelectItem value="draft">Draft</SelectItem>
+                      <SelectItem value="urgent">Urgent</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>

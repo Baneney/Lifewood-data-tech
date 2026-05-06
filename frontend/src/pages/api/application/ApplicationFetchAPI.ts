@@ -105,6 +105,8 @@ export function useFetchPositions() {
       const { data, error } = await supabase
         .from('position')
         .select(`id, title, desc, status`)
+        // This sorts 'Urgent' to the top because 'U' > 'O'/'A' alphabetically
+        .order('status', { ascending: false }) 
 
       if (error) {
         console.error('Error fetching positions:', error);

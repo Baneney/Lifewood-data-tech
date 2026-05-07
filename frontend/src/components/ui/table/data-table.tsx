@@ -100,16 +100,22 @@ export function DataTable<TData, TValue>({
       <div className="relative overflow-hidden">
         {/* Fixed Header */}
         {header && (
-          <div className="bg-[#046241] relative z-10">
+          <div className="relative z-10 bg-[#034E34]">
             <Table className="table-fixed">
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id} className="h-12 hover:bg-transparent border-none">
+                  <TableRow
+                    key={headerGroup.id}
+                    className="h-12 hover:bg-transparent border-none"
+                  >
                     {headerGroup.headers.map((header) => (
                       <TableHead
                         key={header.id}
                         style={{ width: header.getSize() }}
-                        className={cn("text-left pl-4 font-semibold text-white text-xs uppercase tracking-wider", headerClassName)}
+                        className={cn(
+                          "text-left pl-4 font-semibold text-white text-xs uppercase tracking-wider",
+                          headerClassName,
+                        )}
                       >
                         {header.isPlaceholder
                           ? null
@@ -151,19 +157,27 @@ export function DataTable<TData, TValue>({
                       key={row.id}
                       data-state={row.getIsSelected() && "selected"}
                       className={cn(
-                        "transition-colors hover:bg-[#046241]/5 border-slate-100",
+                        "transition-colors border-[var(--admin-border-soft)]",
                         !header && "border-none",
-                        index % 2 === 1 && "bg-slate-50/60",
+                        index % 2 === 1 && "bg-[var(--admin-row-alt)]",
                       )}
+                      style={{}}
+                      onMouseEnter={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                          "var(--admin-row-hover)")
+                      }
+                      onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor = "")
+                      }
                     >
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
-                          style={{ width: cell.column.getSize() }}
-                          className={cn(
-                            "text-left text-slate-700 pl-5 py-3.5",
-                            cellClassName,
-                          )}
+                          style={{
+                            width: cell.column.getSize(),
+                            color: "var(--admin-text)",
+                          }}
+                          className={cn("text-left pl-5 py-3.5", cellClassName)}
                         >
                           {flexRender(
                             cell.column.columnDef.cell,
@@ -177,7 +191,8 @@ export function DataTable<TData, TValue>({
                   <TableRow>
                     <TableCell
                       colSpan={columns?.length}
-                      className="h-32 text-center text-slate-400 text-sm"
+                      className="h-32 text-center text-sm"
+                      style={{ color: "var(--admin-text-muted)" }}
                     >
                       No results found.
                     </TableCell>
@@ -186,7 +201,10 @@ export function DataTable<TData, TValue>({
               ) : (
                 <TableRow>
                   <TableCell colSpan={columns?.length} className="h-32">
-                    <div className="w-full h-full flex items-center justify-center gap-2 text-slate-400 text-sm">
+                    <div
+                      className="w-full h-full flex items-center justify-center gap-2 text-sm"
+                      style={{ color: "var(--admin-text-muted)" }}
+                    >
                       <Loader2 className="animate-spin h-4 w-4 text-[#046241]" />
                       <span>Loading...</span>
                     </div>

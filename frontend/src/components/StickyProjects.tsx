@@ -44,7 +44,7 @@
     if (!projects || projects.length === 0) return null;
 
     return (
-      <div className="grid lg:grid-cols-2 relative bg-[#021a11]">
+      <div className="grid lg:grid-cols-2 relative bg-[#f0f7f3] dark:bg-[#021a11]">
         {/* Left: Scrolling Content */}
         <div className="z-10">
           {projects.map((p, i) => (
@@ -59,7 +59,7 @@
 
         {/* Right: Sticky Image Container with a "Fun" Glass Frame */}
         {/* Right: Sticky Image Container with "Dynamic Lens" Effect */}
-        <div className="hidden lg:block sticky top-0 h-screen overflow-hidden bg-[#021a11]">
+        <div className="hidden lg:block sticky top-0 h-screen overflow-hidden bg-[#e8f5ef] dark:bg-[#021a11]">
           <div className="relative w-full h-full p-8">
             {/* Decorative Tech Frame */}
             <div className="absolute inset-4 border border-white/5 rounded-[2rem] pointer-events-none z-20" />
@@ -152,7 +152,7 @@
           // @ts-ignore
           localRef.current = el;
         }}
-        className="min-h-screen flex flex-col justify-center px-8 md:px-16 py-24 border-b border-white/5"
+        className="min-h-screen flex flex-col justify-center px-8 md:px-16 py-24 border-b border-[#034E34]/10 dark:border-white/5"
       >
         <motion.div
           initial={{ opacity: 0, y: 40 }}
@@ -170,14 +170,14 @@
             </motion.span>
           </div>
 
-          <motion.h2 
+          <motion.h2
             style={{ y: titleY }}
-            className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-6 text-white"
+            className="text-5xl md:text-7xl font-black uppercase tracking-tighter leading-[0.9] mb-6 text-[#034E34] dark:text-white"
           >
             {project.title}
           </motion.h2>
 
-          <p className="text-gray-400 leading-relaxed max-w-md mb-10 text-lg">
+          <p className="text-[#034E34]/60 dark:text-gray-400 leading-relaxed max-w-md mb-10 text-lg">
             {project.desc}
           </p>
 
@@ -189,7 +189,7 @@
                 initial={{ opacity: 0, scale: 0.5 }}
                 whileInView={{ opacity: 1, scale: 1 }}
                 transition={{ delay: idx * 0.1 }}
-                className="p-4 rounded-2xl bg-white/5 border border-white/10 hover:bg-white/10 transition-colors group"
+                className="p-4 rounded-2xl bg-[#034E34]/5 dark:bg-white/5 border border-[#034E34]/10 dark:border-white/10 hover:bg-[#034E34]/10 dark:hover:bg-white/10 transition-colors group"
               >
                 <div 
                   className="text-xl md:text-2xl font-black group-hover:scale-110 transition-transform origin-left" 
@@ -197,7 +197,7 @@
                 >
                   {s.value}
                 </div>
-                <div className="text-[10px] text-gray-500 uppercase tracking-widest mt-1">
+                <div className="text-[10px] text-[#034E34]/40 dark:text-gray-500 uppercase tracking-widest mt-1">
                   {s.label}
                 </div>
               </motion.div>

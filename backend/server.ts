@@ -27,18 +27,23 @@ app.post('/api/hired-or-rejected', async (req, res) => {
   const { email, name, status, position, id } = req.body;
 
   const isHired = status === 'hired';
-  
+  const isShortlisted = status === 'shortlisted';
+
   // Dynamic Content based on status
-  const themeColor = isHired ? '#417256' : '#a39c89'; // Emerald for hired, Muted Grey for rejected
-  const headline = isHired ? 'Congratulations!' : 'Application Update';
-  const subheadline = isHired ? 'Welcome to the team.' : 'Regarding your application.';
-  
-  const mainMessage = isHired 
+  const themeColor = isHired ? '#417256' : isShortlisted ? '#3b82f6' : '#a39c89';
+  const headline = isHired ? 'Congratulations!' : isShortlisted ? 'Great News!' : 'Application Update';
+  const subheadline = isHired ? 'Welcome to the team.' : isShortlisted ? "You've been shortlisted." : 'Regarding your application.';
+
+  const mainMessage = isHired
     ? `We are thrilled to inform you that you have been <strong>selected</strong> for the position. Our team was impressed with your background and we believe you'll be a great fit for Lifewood.`
+    : isShortlisted
+    ? `We are pleased to inform you that your application has been <strong>shortlisted</strong> for the position. Our team reviewed your profile and would like to move forward with the next stage of our hiring process.`
     : `Thank you for giving us the opportunity to review your application. At this time, we have decided to move forward with other candidates who more closely match our current requirements.`;
 
   const footerNote = isHired
     ? `Our HR team will reach out to you shortly regarding the next steps and onboarding process.`
+    : isShortlisted
+    ? `Please watch your email for further instructions regarding the next steps, which may include an interview or assessment.`
     : `We will keep your profile in our database for future opportunities that match your skill set. We wish you the best in your career search.`;
 
   const mailOptions = {
@@ -128,109 +133,91 @@ app.post('/api/hired-or-rejected', async (req, res) => {
 
 
 // EMAIL FOR APPLYING POSITIONS
-app.post('/api/hired-or-rejected', async (req, res) => {
-  const { email, name  } = req.body;
+app.post('/api/send-confirmation', async (req, res) => {
+  const { email, name, applications } = req.body; 
+
+  const applicationListHtml = applications.map((app: any) => `
+    <div style="background-color: #ffffff; border: 1px solid #e2dac5; border-radius: 16px; overflow: hidden; margin-bottom: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
+      <div style="padding: 16px 20px;">
+        <div style="font-size: 10px; font-weight: 800; color: #417256; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 6px;">Position</div>
+        <div style="font-size: 14px; font-weight: 700; color: #021a11;">${app.title}</div>
+      </div>
+      <div style="padding: 12px 20px; background-color: #f8faf9; border-top: 1px dashed #e2dac5;">
+        <div style="font-size: 10px; font-weight: 800; color: #a39c89; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 4px;">Application ID</div>
+        <div style="font-family: 'Courier New', monospace; font-size: 15px; font-weight: 700; color: #034E34;">${app.id}</div>
+      </div>
+    </div>
+  `).join('');
 
   const mailOptions = {
     from: `"Lifewood HR" <${process.env.SMTP_USER}>`,
     to: email,
-    subject: `Application Update - Lifewood`,
+    subject: `Application Received - Lifewood Data Technology`,
     html: `
-        <!DOCTYPE html>
-        <html lang="en">
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+        <style>* { font-family: 'Manrope', Arial, sans-serif !important; }</style>
+      </head>
+      <body style="background-color: #f5eedb; padding: 30px 10px; margin: 0;">
+        <div style="max-width: 500px; margin: auto; background-color: #fcfaf5; border: 1px solid #e2dac5; border-radius: 32px; overflow: hidden;">
 
-        <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Application Received</title>
-        </head>
+          <div style="padding: 45px 20px 25px 20px; text-align: center;">
+            <img src="https://lknmoriyqfrhhccuikut.supabase.co/storage/v1/object/public/resumes/randomLogo/Lifewood-Logo.png"
+                 alt="Lifewood" style="height: 26px;">
+          </div>
 
-        <body style="background-color: #f5eedb; padding: 20px; margin: 0; -webkit-font-smoothing: antialiased;">
+          <div style="padding: 0 40px 20px 40px; text-align: center;">
+            <h1 style="color: #021a11; font-size: 26px; font-weight: 800; margin: 0; letter-spacing: -0.02em; text-transform: uppercase;">
+              Application Received
+            </h1>
+            <p style="color: #417256; font-size: 15px; font-weight: 600; margin-top: 8px;">
+              We've got your submission.
+            </p>
+          </div>
 
-            <div
-                style="font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; max-width: 600px; margin: auto; background-color: #ffffff; border: 1px solid #e2dac5; border-radius: 24px; overflow: hidden; box-shadow: 0 15px 30px rgba(71, 54, 23, 0.05);">
-
-                <!-- Header -->
-                <div style="text-align: center; padding-top: 50px;">
-                    <img src="https://lknmoriyqfrhhccuikut.supabase.co/storage/v1/object/public/resumes/randomLogo/Lifewood-Logo.png"
-                        alt="Lifewood Logo" style="height: 30px; width: auto; display: inline-block;">
-                </div>
-
-                <!-- Hero -->
-                <div style="padding: 10px 40px 20px 40px; text-align: center;">
-                    <h1 style="color: #021a11; font-size: 28px; font-weight: 700; margin: 5px 0 8px 0; letter-spacing: -0.5px;">
-                        Application Received
-                    </h1>
-                    <p style="color: #417256; font-size: 15px; margin: 0;">
-                        We're excited to review your profile.
-                    </p>
-                </div>
-
-                <div style="padding: 0 40px 40px 40px;">
-                    <p style="color: #1a2e24; font-size: 16px; line-height: 1.6; margin-top: 30px;">
-                        Hello <strong>${name}</strong>,
-                    </p>
-
-                    <p style="color: #417256; font-size: 15px; line-height: 1.6;">
-                        Thank you for your interest in joining <strong>Lifewood Data Technology</strong>. We have successfully
-                        received your credentials, and our hiring team is now reviewing your application for a potential match
-                        with our current needs.
-                    </p>
-
-                    <!-- Compact Status Card -->
-                    <div
-                        style="background-color: #034E34; border-radius: 14px; padding: 18px 20px; margin: 24px 0; box-shadow: 0 8px 16px rgba(3, 78, 52, 0.12);">
-
-                        <p
-                            style="margin: 0; font-size: 10px; font-weight: 900; color: #FFC76A; text-transform: uppercase; letter-spacing: 2px;">
-                            Current Status
-                        </p>
-
-                        <p style="margin: 6px 0 0 0; font-size: 16px; font-weight: 600; color: #ffffff;">
-                            Under Review
-                        </p>
-
-                        <p style="margin: 8px 0 0 0; font-size: 12.5px; color: rgba(255,255,255,0.75); line-height: 1.4;">
-                            We’ll contact you via email if your profile matches our requirements.
-                        </p>
-
-                    </div>
-
-                    <p style="color: #417256; font-size: 14px; line-height: 1.6;">
-                        In the meantime, feel free to learn more about our culture and our commitment to digitizing services.
-                    </p>
-
-                    <div style="margin-top: 40px; padding-top: 30px; border-top: 1px solid #f0e9d6;">
-                        <p style="color: #417256; font-size: 13px; line-height: 1.6; margin: 0;">
-                            Best regards,<br>
-                            <strong style="color: #021a11; font-size: 15px;">The Lifewood Hiring Team</strong>
-                        </p>
-                    </div>
-                </div>
-
-                <!-- Footer -->
-                <div style="background-color: #faf7ef; padding: 30px; text-align: center; border-top: 1px solid #f0e9d6;">
-                    <p
-                        style="margin: 0; font-size: 11px; font-weight: 700; color: #a39c89; text-transform: uppercase; letter-spacing: 1px;">
-                        © 2026 Lifewood Data Technology
-                    </p>
-                    <p style="margin: 8px 0 0 0; font-size: 11px; color: #b5ae9a;">
-                        Cebu City • IT Park, Philippines
-                    </p>
-                </div>
+          <div style="padding: 0 30px 30px 30px;">
+            <div style="background-color: #ffffff; border: 1px solid #e2dac5; border-radius: 24px; padding: 24px; margin-bottom: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+              <div style="font-size: 11px; font-weight: 800; color: #a39c89; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px;">Message</div>
+              <div style="font-size: 15px; color: #021a11; line-height: 1.6; font-weight: 500;">
+                Hi <strong>${name}</strong>,<br><br>
+                Thank you for applying to Lifewood Data Technology. Your application has been successfully received. Below are your tracking details — keep them safe so you can monitor your status on our careers portal.
+              </div>
             </div>
 
-        </body>
+            <div style="font-size: 11px; font-weight: 800; color: #a39c89; text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 12px; padding-left: 4px;">Your Applications</div>
+            ${applicationListHtml}
 
-        </html>
-    `,
+            <div style="margin-top: 20px; padding: 16px 20px; background-color: #faf7ef; border: 1px solid #f0e9d6; border-radius: 16px; border-left: 4px solid #FFC370;">
+              <p style="margin: 0; font-size: 13px; color: #417256; font-weight: 600; line-height: 1.6;">
+                You can use these IDs on our careers portal to check your application status at any time.
+              </p>
+            </div>
+          </div>
+
+          <div style="padding: 35px; text-align: center; border-top: 1px solid #e2dac5; background-color: #faf7ef;">
+            <p style="margin: 0; font-size: 10px; font-weight: 800; color: #b5ae9a; text-transform: uppercase; letter-spacing: 2.5px;">
+              Lifewood Data Technology • ${new Date().getFullYear()}
+            </p>
+            <p style="margin: 6px 0 0 0; font-size: 10px; color: #b5ae9a; font-weight: 500;">
+              IT Park • Cebu City • Philippines
+            </p>
+          </div>
+
+        </div>
+      </body>
+      </html>
+    `
   };
 
   try {
     await transporter.sendMail(mailOptions);
-    res.status(200).json({ message: 'Interview email sent!' });
+    res.status(200).json({ message: 'Email sent successfully!' });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to send interview email.' });
+    res.status(500).json({ error: 'Failed to send email.' });
   }
 });
 

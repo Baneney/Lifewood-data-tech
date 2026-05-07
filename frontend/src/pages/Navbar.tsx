@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import { NavLink } from "react-router-dom"
 import logo from "../assets/Lifewood-Logo.png"
+import { ThemeToggle } from "@/components/ui/ThemeToggle"
 
 const links = [
   { label: "Home", to: "/" },
@@ -22,7 +23,9 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "bg-white/80 backdrop-blur-md shadow-sm" : "bg-transparent"}`}>
+    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "backdrop-blur-md shadow-sm" : "bg-transparent"}`}
+      style={scrolled ? { backgroundColor: "var(--site-bg)" } : undefined}
+    >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         <NavLink to="/" onClick={() => setOpen(false)}>
@@ -40,7 +43,7 @@ export default function Navbar() {
                   `relative px-4 py-2 rounded-full transition-colors duration-200 group
                   ${isActive
                     ? "text-[#FFB347]"
-                    : scrolled ? "text-gray-600 hover:text-[#FFB347]" : "text-white/90 hover:text-white"
+                    : scrolled ? "text-[#034E34] hover:text-[#FFB347]" : "text-white/90 hover:text-white"
                   }`
                 }
               >
@@ -55,24 +58,27 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <NavLink
-          to="/contact"
-          className={`hidden md:inline-block text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 ${scrolled ? "bg-[#034E34] text-white hover:bg-[#417256]" : "bg-[#034E34]/50 text-white border-2 border-[#034E34] hover:bg-[#417256] hover:text-white"}`}
-        >
-          Get Started
-        </NavLink>
+        <div className="hidden md:flex items-center gap-3">
+          <ThemeToggle />
+          <NavLink
+            to="/contact"
+            className={`text-sm font-semibold px-5 py-2 rounded-full transition-all duration-200 ${scrolled ? "bg-[#034E34] text-white hover:bg-[#417256]" : "bg-[#034E34]/50 text-white border-2 border-[#034E34] hover:bg-[#417256] hover:text-white"}`}
+          >
+            Get Started
+          </NavLink>
+        </div>
 
         {/* Hamburger */}
         <button className="md:hidden flex flex-col gap-1.5 p-1" onClick={() => setOpen(!open)}>
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-gray-700" : "bg-white"} ${open ? "rotate-45 translate-y-2" : ""}`} />
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-gray-700" : "bg-white"} ${open ? "opacity-0" : ""}`} />
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-gray-700" : "bg-white"} ${open ? "-rotate-45 -translate-y-2" : ""}`} />
+          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "rotate-45 translate-y-2" : ""}`} />
+          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "opacity-0" : ""}`} />
+          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "-rotate-45 -translate-y-2" : ""}`} />
         </button>
       </div>
 
       {/* Mobile drawer */}
       <div className={`md:hidden overflow-hidden transition-all duration-300 ${open ? "max-h-96" : "max-h-0"}`}>
-        <div className="bg-white/95 backdrop-blur-md border-t border-gray-100 px-6 py-4 flex flex-col gap-1">
+        <div className="backdrop-blur-md border-t px-6 py-4 flex flex-col gap-1" style={{ backgroundColor: "var(--site-bg)", borderColor: "var(--site-border)" }}>
           {links.map(l => (
             <NavLink
               key={l.label}
@@ -80,13 +86,13 @@ export default function Navbar() {
               end={l.to === "/"}
               onClick={() => setOpen(false)}
               className={({ isActive }) =>
-                `px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive ? "bg-[#1a3c5e]/10 text-[#1a3c5e] font-semibold" : "text-gray-600 hover:bg-gray-100"}`
+                `px-4 py-3 rounded-xl text-sm font-medium transition-colors ${isActive ? "bg-[#034E34]/10 text-[#034E34] font-semibold" : "text-[#034E34]/70 hover:bg-[#034E34]/5"}`
               }
             >
               {l.label}
             </NavLink>
           ))}
-          <NavLink to="/contact" onClick={() => setOpen(false)} className="mt-2 bg-[#1a3c5e] text-white px-4 py-3 rounded-xl text-sm font-semibold text-center hover:bg-[#15304d] transition-colors">
+          <NavLink to="/contact" onClick={() => setOpen(false)} className="mt-2 bg-[#034E34] text-white px-4 py-3 rounded-xl text-sm font-semibold text-center hover:bg-[#417256] transition-colors">
             Get Started
           </NavLink>
         </div>

@@ -136,16 +136,15 @@ export function FilterGrid({ projects, tags, onCardClick }: FilterGridProps) {
   };
 
   return (
-    <section className="py-24 md:py-32 px-8 md:px-16 bg-[#021a11]">
+    <section className="py-24 md:py-32 px-8 md:px-16 bg-[#E6E6E6] dark:bg-[#021a11]">
       <div className="max-w-7xl mx-auto">
-
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
           <div>
             <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.3em] mb-4">
               Browse by Category
             </p>
-            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none text-white">
+            <h2 className="text-4xl md:text-6xl font-black uppercase tracking-tighter leading-none text-[#034E34] dark:text-white">
               All Projects
             </h2>
           </div>
@@ -153,22 +152,29 @@ export function FilterGrid({ projects, tags, onCardClick }: FilterGridProps) {
           {/* Filter tabs */}
           <div className="flex gap-2 flex-wrap">
             {tags.map((t) => {
-              const count = t === "All" ? projects.length : projects.filter((p) => p.tag === t).length;
+              const count =
+                t === "All"
+                  ? projects.length
+                  : projects.filter((p) => p.tag === t).length;
               return (
                 <button
                   key={t}
                   onClick={() => setActive(t)}
                   className="relative px-4 py-2 text-xs font-black uppercase tracking-widest border transition-colors duration-200 overflow-hidden"
                   style={{
-                    borderColor: active === t ? "#FFB347" : "rgba(255,255,255,0.2)",
-                    color: active === t ? "#021a11" : "rgba(255,255,255,0.5)",
+                    borderColor: active === t ? "#FFB347" : "rgba(3,78,52,0.2)",
+                    color: active === t ? "#021a11" : "rgba(3,78,52,0.5)",
                   }}
                 >
                   {active === t && (
                     <motion.div
                       layoutId="activeFilter"
                       className="absolute inset-0 bg-[#FFB347]"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                      transition={{
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                      }}
                     />
                   )}
                   <span className="relative z-10 flex items-center gap-2">
@@ -176,8 +182,11 @@ export function FilterGrid({ projects, tags, onCardClick }: FilterGridProps) {
                     <span
                       className="text-[9px] px-1.5 py-0.5 rounded-full font-black"
                       style={{
-                        backgroundColor: active === t ? "rgba(2,26,17,0.2)" : "rgba(255,255,255,0.1)",
-                        color: active === t ? "#021a11" : "rgba(255,255,255,0.4)",
+                        backgroundColor:
+                          active === t
+                            ? "rgba(2,26,17,0.2)"
+                            : "rgba(3,78,52,0.08)",
+                        color: active === t ? "#021a11" : "rgba(3,78,52,0.5)",
                       }}
                     >
                       {count}
@@ -190,7 +199,10 @@ export function FilterGrid({ projects, tags, onCardClick }: FilterGridProps) {
         </div>
 
         {/* Grid */}
-        <motion.div layout className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-white/5">
+        <motion.div
+          layout
+          className="grid sm:grid-cols-2 lg:grid-cols-3 gap-px bg-[#034E34]/8 dark:bg-white/5"
+        >
           <AnimatePresence mode="popLayout">
             {filtered.map((p, i) => (
               <ProjectCard
@@ -202,7 +214,6 @@ export function FilterGrid({ projects, tags, onCardClick }: FilterGridProps) {
             ))}
           </AnimatePresence>
         </motion.div>
-
       </div>
     </section>
   );

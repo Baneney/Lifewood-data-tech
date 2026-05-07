@@ -597,9 +597,12 @@ function StatCard({
   accent: string;
 }) {
   return (
-    <div className="group relative bg-white rounded-[2.5rem] border border-gray-100 p-7 shadow-sm hover:shadow-2xl hover:shadow-[#034E34]/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden cursor-default">
-      {/* 1. Animated Hover Pattern */}
-      <div className="absolute -right-4 -bottom-4 w-24 h-24 bg-gray-50 rounded-full group-hover:scale-[3] group-hover:bg-[#FFB347]/5 transition-all duration-700 opacity-50" />
+    <div className="group relative rounded-[2.5rem] border p-7 shadow-sm hover:shadow-2xl hover:shadow-[#034E34]/10 hover:-translate-y-2 transition-all duration-500 overflow-hidden cursor-default"
+      style={{ backgroundColor: "var(--admin-surface)", borderColor: "var(--admin-border-soft)" }}
+    >
+      <div className="absolute -right-4 -bottom-4 w-24 h-24 rounded-full group-hover:scale-[3] group-hover:bg-[#FFB347]/5 transition-all duration-700 opacity-50"
+        style={{ backgroundColor: "var(--admin-surface-2)" }}
+      />
 
       <div className="relative z-10">
         <div className="flex items-start justify-between mb-8">
@@ -628,14 +631,14 @@ function StatCard({
 
         <div>
           <div className="flex items-baseline gap-1">
-            <span className="text-5xl font-black text-gray-900 tracking-tighter italic group-hover:text-[#034E34] transition-colors">
+            <span className="text-5xl font-black tracking-tighter italic group-hover:text-[#034E34] transition-colors" style={{ color: "var(--admin-text)" }}>
               {value}
             </span>
             {/* Visual Flair: Little decorative dot */}
             <span className="w-2 h-2 rounded-full bg-[#FFB347]" />
           </div>
 
-          <div className="text-[11px] font-black text-gray-400 uppercase tracking-[0.15em] mt-2 mb-4">
+          <div className="text-[11px] font-black uppercase tracking-[0.15em] mt-2 mb-4" style={{ color: "var(--admin-text-muted)" }}>
             {label}
           </div>
 
@@ -755,7 +758,10 @@ export default function Overview() {
     .slice(0, 6);
 
   return (
-    <div className="space-y-8 max-w-7xl mx-auto pb-12 bg-gray-50/30 min-h-screen">
+    <div
+      className="space-y-8 max-w-7xl mx-auto pb-12 min-h-screen"
+      style={{ backgroundColor: "var(--admin-bg)" }}
+    >
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="pb-8">
@@ -812,13 +818,22 @@ export default function Overview() {
 
       {/* 2. Middle Analytics Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white p-8 rounded-[3rem] border border-gray-100 shadow-sm relative overflow-hidden flex flex-col">
+        <div
+          className="lg:col-span-2 p-8 rounded-[3rem] border shadow-sm relative overflow-hidden flex flex-col"
+          style={{
+            backgroundColor: "var(--admin-surface)",
+            borderColor: "var(--admin-border-soft)",
+          }}
+        >
           {/* Header Section */}
           <div className="flex items-center justify-between mb-10">
             <div className="flex items-center gap-4">
               <div className="w-1.5 h-10 bg-[#034E34] rounded-full" />
               <div>
-                <h3 className="text-xl font-black text-gray-900 tracking-tight">
+                <h3
+                  className="text-xl font-black tracking-tight"
+                  style={{ color: "var(--admin-text)" }}
+                >
                   Demand by Role
                 </h3>
                 <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1">
@@ -852,7 +867,10 @@ export default function Overview() {
                         <span className="text-xs font-black text-gray-300 group-hover:text-[#FFB347] transition-colors">
                           {String(index + 1).padStart(2, "0")}
                         </span>
-                        <h4 className="text-xs font-black text-gray-700 uppercase tracking-tight group-hover:text-[#034E34] transition-colors">
+                        <h4
+                          className="text-xs font-black uppercase tracking-tight group-hover:text-[#034E34] transition-colors"
+                          style={{ color: "var(--admin-text)" }}
+                        >
                           {role.name}
                         </h4>
                       </div>
@@ -882,13 +900,18 @@ export default function Overview() {
           </div>
         </div>
 
-        <div className="bg-[#034E34] p-8 rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col justify-between group min-h-[400px]">
-          {/* Moving Background Glow */}
+        <div
+          className="p-8 rounded-[2rem] shadow-2xl relative overflow-hidden flex flex-col justify-between group min-h-[400px]"
+          style={{ backgroundColor: "#034E34", border: "1px solid #034E34" }}
+        >
           <div className="absolute top-[-10%] right-[-10%] w-64 h-64 bg-emerald-500/20 rounded-full blur-3xl group-hover:bg-[#FFB347]/20 transition-all duration-1000 group-hover:scale-150" />
 
           <div className="relative">
             <div className="flex justify-between items-start mb-8">
-              <h3 className="text-white/60 text-xs font-black uppercase tracking-[0.2em]">
+              <h3
+                className="text-xs font-black uppercase tracking-[0.2em]"
+                style={{ color: "#FFB347" }}
+              >
                 Pipeline Health
               </h3>
               {/* Live "Ping" Indicator */}
@@ -906,7 +929,10 @@ export default function Overview() {
             <div className="space-y-12">
               <div>
                 <div className="flex items-baseline gap-1">
-                  <p className="text-6xl font-black text-white tracking-tighter italic leading-none">
+                  <p
+                    className="text-6xl font-black tracking-tighter italic leading-none"
+                    style={{ color: "white" }}
+                  >
                     {(
                       (highPotentialCount / (activePipelineCount || 1)) *
                       100
@@ -926,7 +952,10 @@ export default function Overview() {
               </div>
 
               <div className="pt-8 border-t border-white/5">
-                <p className="text-3xl font-black text-white italic leading-none">
+                <p
+                  className="text-3xl font-black italic leading-none"
+                  style={{ color: "white" }}
+                >
                   {activePipelineCount}
                 </p>
                 <p className="text-emerald-300/80 text-xs font-bold uppercase mt-2">
@@ -959,14 +988,23 @@ export default function Overview() {
       </div>
 
       {/* 3. Priority List */}
-      <div className="bg-white rounded-[2rem] border border-gray-100 shadow-sm p-10">
+      <div
+        className="rounded-[2rem] border shadow-sm p-10"
+        style={{
+          backgroundColor: "var(--admin-surface)",
+          borderColor: "var(--admin-border-soft)",
+        }}
+      >
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             {/* Visual Accent Block */}
             <div className="w-1.5 h-10 bg-[#034E34] rounded-full hidden sm:block" />
 
             <div>
-              <h3 className="text-xl font-black text-gray-900 tracking-tight leading-none">
+              <h3
+                className="text-xl font-black tracking-tight leading-none"
+                style={{ color: "var(--admin-text)" }}
+              >
                 Active Talent Distribution
               </h3>
               <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mt-1.5 flex items-center gap-2">

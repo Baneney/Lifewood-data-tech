@@ -59,14 +59,15 @@ export function DetailsDrawer({
           - scrollbar-track: keeps the background transparent
         */}
         <div
-          className="flex-1 overflow-y-auto pr-2 pb-8
+          onWheel={(e) => e.stopPropagation()}
+          className="flex-1 min-h-0 overflow-y-auto pr-2 pb-8
           [&::-webkit-scrollbar]:w-1.5
           [&::-webkit-scrollbar-track]:bg-transparent
           [&::-webkit-scrollbar-thumb]:bg-emerald-800/20
           hover:[&::-webkit-scrollbar-thumb]:bg-emerald-800/60
           [&::-webkit-scrollbar-thumb]:rounded-full"
         >
-          <div className="space-y-8">{children}</div>
+          {children}
         </div>
       </SheetContent>
     </Sheet>

@@ -36,49 +36,46 @@ export function useApplications() {
   const [applications, setapplications] = useState<ApplicationDataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const fetchApplications = async () => {
-      setIsLoading(true);
+  const fetchApplications = async () => {
+    setIsLoading(true);
+    
+    const { data, error } = await supabase
+      .from('application')
+      .select(`
+        id, 
+        date_submitted,
+        applicant ( id, fname, lname, dob, email, phone, resume ),
+        position ( id, title ),
+        logs ( 
+          id,
+          status, 
+          datetime,
+          potential,
+          remarks 
+        )
+      `)
+      .order('datetime', { foreignTable: 'logs', ascending: false })
+      .limit(1, { foreignTable: 'logs' }) 
+      .order('date_submitted', { ascending: false });
+
+    if (error) {
+      console.error('Error fetching applications:', error);
+    } else if (data) {
+      const formattedData = data.map(app => ({
+        ...app,
+        current_status: app.logs?.[0]?.status || 'Pending'
+      }));
       
-      const { data, error } = await supabase
-        .from('application')
-        .select(`
-          id, 
-          date_submitted,
-          applicant ( id, fname, lname, dob, email, phone, resume ),
-          position ( id, title ),
-          logs ( 
-            id,
-            status, 
-            datetime,
-            potential,
-            remarks 
-          )
-        `)
-        // Correctly ordering to get the newest log first
-        .order('datetime', { foreignTable: 'logs', ascending: false })
-        // Restricting the payload to only the latest 1 log per application
-        .limit(1, { foreignTable: 'logs' }) 
-        .order('date_submitted', { ascending: false });
+      setapplications(formattedData as unknown as ApplicationDataType[]);
+    }
+    setIsLoading(false);
+  };
 
-      if (error) {
-        console.error('Error fetching applications:', error);
-      } else if (data) {
-        // Flattening the data so your table doesn't have to deal with the logs array
-        const formattedData = data.map(app => ({
-          ...app,
-          current_status: app.logs?.[0]?.status || 'Pending'
-        }));
-        
-        setapplications(formattedData as unknown as ApplicationDataType[]);
-      }
-      setIsLoading(false);
-    };
-
+  useEffect(() => {
     fetchApplications();
   }, []);
 
-  return { applications, isLoading };
+  return { applications, isLoading, refetch: fetchApplications };
 }
 
 
@@ -99,29 +96,26 @@ export function useFetchPositions() {
   const [positions, setPositions] = useState<PositionDataType[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  const fetchPositions = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('position')
+      .select(`id, title, desc, status`)
+      .order('status', { ascending: false })
+
+    if (error) {
+      console.error('Error fetching positions:', error);
+    } else if (data) {
+      setPositions(data as unknown as PositionDataType[]);
+    }
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    const fetchPositions = async () => {
-      setIsLoading(true);
-      const { data, error } = await supabase
-        .from('position')
-        .select(`id, title, desc, status`)
-        // This sorts 'Urgent' to the top because 'U' > 'O'/'A' alphabetically
-        .order('status', { ascending: false }) 
-
-      if (error) {
-        console.error('Error fetching positions:', error);
-      } else if (data) {
-        // We cast 'as unknown as ApplicationData[]' if Supabase types 
-        // aren't auto-generated, or just ensure the structures match.
-        setPositions(data as unknown as PositionDataType[]);
-      }
-      setIsLoading(false);
-    };
-
     fetchPositions();
   }, []);
 
-  return { positions, isLoading };
+  return { positions, isLoading, refetch: fetchPositions };
 }
 
 

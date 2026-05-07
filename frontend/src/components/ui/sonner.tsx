@@ -27,8 +27,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           toast:
             "group cn-toast flex items-center gap-3 border shadow-lg px-4 py-3 rounded-lg",
           // Use more vibrant colors and ensure they override everything
-          success: "!bg-green-600/50 !text-white !border-green-700",
-          error: "!bg-red-600/50 !text-white !border-red-700",
+          success: "!bg-green-600/70 !text-white !border-green-700",
+          error: "!bg-red-600/70 !text-white !border-red-700",
           description:
             "group-[.error]:!text-red-50 group-[.success]:!text-green-50",
           icon: "group-[.error]:!text-white group-[.success]:!text-white",

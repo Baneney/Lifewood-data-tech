@@ -15,6 +15,8 @@ import imgCV       from "@/assets/projects/projects-computervision.jpeg"
 //components
 import { StickyProjects } from "../components/StickyProjects"
 import { FilterGrid } from "../components/FilterGrid"
+import SplashCursor from "../components/SplashCursor"
+import LightRays from "../components/LightRays"
 
 
 // ── Data ──────────────────────────────────────────────────────────────────────
@@ -130,238 +132,308 @@ const TAGS = ["All", "Computer Vision", "NLP", "AI", "Data"]
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function Projects() {
+  const containerRef = useRef(null);
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-    const containerRef = useRef(null)
-    const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+  const scrollToProject = (id: number) => {
+    const idx = PROJECTS.findIndex((p) => p.id === id);
+    const el = itemRefs.current[idx];
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth", block: "center" });
+  };
 
-    const scrollToProject = (id: number) => {
-      const idx = PROJECTS.findIndex(p => p.id === id)
-      const el = itemRefs.current[idx]
-      if (!el) return
-      el.scrollIntoView({ behavior: "smooth", block: "center" })
-    }
-    
-    // ref for the scroll container
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start center", "center center"],
-    });
+  // ── Section refs for scoped parallax ──────────────────────────────────────
+  const heroRef       = useRef<HTMLElement>(null);
+  const stickyRef     = useRef<HTMLDivElement>(null);
+  const filterRef     = useRef<HTMLDivElement>(null);
 
-    // Images start centered (0) and fly out
-    // Images pull inward at start, settle at visible edges at end
-    const xLeft  = useSpring(useTransform(scrollYProgress, [0, 1], [280, -120]), { stiffness: 60, damping: 20 });
-    const xRight = useSpring(useTransform(scrollYProgress, [0, 1], [-280,  120]), { stiffness: 60, damping: 20 });
-    const yUp    = useSpring(useTransform(scrollYProgress, [0, 1], [180,  -80]), { stiffness: 60, damping: 20 });
-    const yDown  = useSpring(useTransform(scrollYProgress, [0, 1], [-180,   80]), { stiffness: 60, damping: 20 });
+  // Hero — bg scales up, content lifts + fades
+  const { scrollYProgress: heroP } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const heroBgScale   = useTransform(heroP, [0, 1], [1, 1.15]);
+  const heroContentY  = useTransform(heroP, [0, 1], ["0%", "-20%"]);
+  const heroOpacity   = useTransform(heroP, [0, 0.8], [1, 0]);
+  const heroScale     = useTransform(heroP, [0, 1], [1, 0.95]);
 
-    // Images are visible at start, fade slightly as they leave (optional)
-    const imgOpacity = useTransform(scrollYProgress, [0, 0.3, 1], [1, 1, 0.6]);
+  // StickyProjects — large watermark drifts horizontally
+  const { scrollYProgress: stickyP } = useScroll({ target: stickyRef, offset: ["start end", "end start"] });
+  const stickyWatermarkX = useTransform(stickyP, [0, 1], ["0%", "-40%"]);
 
-    // Text fades in as images clear out
-    const textOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.3, 1]);
-    const textY       = useTransform(scrollYProgress, [0, 1], [40, 0]);
+  // FilterGrid — heading drifts up, bg tint drifts down
+  const { scrollYProgress: filterP } = useScroll({ target: filterRef, offset: ["start end", "end start"] });
+  const filterHeadingY = useTransform(filterP, [0, 1], ["80px", "-80px"]);
+  const filterBgY      = useTransform(filterP, [0, 1], ["-8%", "8%"]);
 
+  // CTA scroll (existing)
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start center", "center center"],
+  });
 
-    //HERO - variables
-    const heroRef = useRef(null);
-    const { scrollY } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-    });
+  // Images start centered (0) and fly out
+  // Images pull inward at start, settle at visible edges at end
+  const xLeft = useSpring(useTransform(scrollYProgress, [0, 1], [280, -120]), {
+    stiffness: 60,
+    damping: 20,
+  });
+  const xRight = useSpring(useTransform(scrollYProgress, [0, 1], [-280, 120]), {
+    stiffness: 60,
+    damping: 20,
+  });
+  const yUp = useSpring(useTransform(scrollYProgress, [0, 1], [180, -80]), {
+    stiffness: 60,
+    damping: 20,
+  });
+  const yDown = useSpring(useTransform(scrollYProgress, [0, 1], [-180, 80]), {
+    stiffness: 60,
+    damping: 20,
+  });
 
-    //HERO - Parallax effects 
-    const heroBgY = useTransform(scrollY, [0, 500], [0, 200]);
-    const heroTextY = useTransform(scrollY, [0, 500], [0, -100]);
-    const heroOpacity = useTransform(scrollY, [0, 500], [1, 0]);
+  // Images are visible at start, fade slightly as they leave (optional)
+  const imgOpacity = useTransform(scrollYProgress, [0, 0.3, 1], [1, 1, 0.6]);
+
+  // Text fades in as images clear out
+  const textOpacity = useTransform(scrollYProgress, [0, 0.5, 1], [0, 0.3, 1]);
+  const textY = useTransform(scrollYProgress, [0, 1], [40, 0]);
 
   return (
-    <div className="bg-black text-white">
-
+    <div style={{ backgroundColor: "var(--site-bg)" }} className="text-white">
       {/* ── Hero ── */}
-        <section 
-            ref={heroRef}
-            className="relative min-h-screen flex flex-col justify-end pb-16 px-8 md:px-16 overflow-hidden border-b border-white/10"
-            >
-            {/* Dynamic Parallax Background */}
-            <motion.div 
-                style={{ y: heroBgY }}
-                className="absolute inset-0 z-0"
-            >
-                <img src={imgCV} alt="" className="w-full h-full object-cover opacity-20 scale-110" />
-                <div className="absolute inset-0 bg-linear-to-t from-[#021a11] via-transparent to-transparent" />
-            </motion.div>
+      <section
+        ref={heroRef}
+        className="relative min-h-screen flex flex-col justify-end pb-20 px-8 md:px-16 overflow-hidden bg-[#F8F9F5] dark:bg-[#021a11] transition-colors duration-700"
+      >
+        {/* SplashCursor bg */}
+        <div className="absolute inset-0 z-0">
+          <SplashCursor
+            DENSITY_DISSIPATION={2}
+            VELOCITY_DISSIPATION={1.5}
+            PRESSURE={0.05}
+            CURL={5}
+            SPLAT_RADIUS={0.15}
+            SPLAT_FORCE={4000}
+            TRANSPARENT={true}
+            RAINBOW_MODE={false}
+            COLOR="#FFB347"
+          />
+        </div>
 
-            {/* Animated Foreground Content */}
-            <motion.div 
-                style={{ y: heroTextY, opacity: heroOpacity }}
-                className="relative z-10"
-            >
-                <motion.div
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8 }}
-                >
-                <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.4em] mb-6 flex items-center gap-3">
-                    <span className="w-8 h-px bg-[#FFB347]" />
-                    Our Work
-                </p>
-                </motion.div>
+        {/* Bg layer that slowly scales up as you scroll out — creates zoom parallax */}
+        <motion.div
+          style={{ scale: heroBgScale }}
+          className="absolute inset-0 z-[1] bg-gradient-to-b from-transparent via-transparent to-[#F8F9F5]/60 dark:to-[#021a11]/60 pointer-events-none will-change-transform"
+        />
 
-                <h1 className="text-6xl md:text-8xl lg:text-[10rem] font-black leading-none tracking-tighter uppercase overflow-hidden">
-                    {"Projects".split("").map((char, i) => (
-                        <motion.span
-                            key={i}
-                            // Removed the display="..." prop from here
-                            initial={{ y: "100%" }}
-                            animate={{ y: 0 }}
-                            transition={{ 
-                                duration: 0.8, 
-                                delay: i * 0.05, 
-                                ease: [0.22, 1, 0.36, 1] 
-                            }}
-                            // className="inline-block" already handles the display logic
-                            className="inline-block"
-                            >
-                            {/* Handle spaces properly if your string had them */}
-                            {char === " " ? "\u00A0" : char}
-                        </motion.span>
-                    ))}
-                </h1>
-
-                <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.6, duration: 0.8 }}
-                >
-                    <div className="mt-8 w-16 h-px bg-[#FFB347]/50" />
-                    <p className="mt-6 text-gray-400 text-lg max-w-lg leading-relaxed font-medium">
-                        Real-world <span className="text-white">AI data projects</span> across computer vision, NLP, and machine learning — delivered at scale.
-                    </p>
-
-                    {/* Interactive Stats Chips */}
-                    <div className="mt-12 flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-[0.2em]">
-                        {[
-                        { label: PROJECTS.length + " Projects", color: "#FFB347" },
-                        { label: TAGS.length - 1 + " Categories", color: "white" },
-                        { label: "Global Delivery", color: "white" }
-                        ].map((stat, i) => (
-                            <motion.span
-                                key={i}
-                                whileHover={{ scale: 1.05, backgroundColor: "rgba(255,255,255,0.1)" }}
-                                className="px-4 py-2 border border-white/10 rounded-full text-white/50 cursor-default transition-colors"
-                                style={{ borderColor: i === 0 ? stat.color : "rgba(255,255,255,0.1)" }}
-                            >
-                                {stat.label}
-                            </motion.span>
-                        ))}
-                    </div>
-                </motion.div>
-            </motion.div>
-
-            {/* Refined Scroll Indicator */}
-            <div className="absolute bottom-8 right-8 md:right-16 flex flex-col items-center gap-4">
-                <div className="w-px h-12 bg-linear-to-b from-transparent via-white/20 to-white/20 relative overflow-hidden">
-                <motion.div 
-                    animate={{ y: [0, 48, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                    className="absolute top-0 left-0 w-full h-1/3 bg-[#FFB347]"
-                />
-                </div>
-                <span className="text-white/20 text-[10px] uppercase tracking-[0.3em] vertical-text">Scroll</span>
+        {/* Hero content — lifts up and fades */}
+        <motion.div
+          style={{ y: heroContentY, opacity: heroOpacity, scale: heroScale }}
+          className="relative z-10 w-full will-change-transform"
+        >
+          <div className="max-w-7xl mx-auto">
+            {/* Eyebrow */}
+            <div className="overflow-hidden mb-8">
+              <motion.p
+                className="text-[10px] font-black text-[#FFB347] uppercase tracking-[0.6em] flex items-center gap-4"
+                initial={{ y: "100%", opacity: 0 }}
+                animate={{ y: "0%", opacity: 1 }}
+                transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <span className="w-12 h-[2px] bg-[#FFB347]" />
+                Dataset Archive v2.0
+              </motion.p>
             </div>
-        </section>
+
+            {/* Headline — masked line reveal */}
+            <h1 className="text-7xl md:text-9xl lg:text-[12rem] font-black leading-[0.85] tracking-tighter uppercase text-[#034E34] dark:text-white">
+              {["Projects"].map((line, i) => (
+                <div key={line} className="overflow-hidden block">
+                  <motion.span
+                    className="block"
+                    initial={{ y: "110%" }}
+                    animate={{ y: "0%" }}
+                    transition={{ duration: 0.7, delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                  >
+                    {line}
+                  </motion.span>
+                </div>
+              ))}
+            </h1>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mt-16 items-end">
+              {/* Subtext */}
+              <div className="overflow-hidden">
+                <motion.p
+                  className="text-[#034E34]/70 dark:text-gray-400 text-xl max-w-md leading-relaxed font-medium"
+                  initial={{ y: "100%", opacity: 0 }}
+                  animate={{ y: "0%", opacity: 1 }}
+                  transition={{ duration: 0.8, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                >
+                  Turning massive noise into{" "}
+                  <span className="text-[#034E34] dark:text-white font-bold">
+                    structured intelligence.
+                  </span>{" "}
+                  A curated look at our global data operations.
+                </motion.p>
+              </div>
+
+              {/* Tags */}
+              <motion.div
+                className="flex flex-wrap gap-3 justify-start md:justify-end"
+                initial="hidden"
+                animate="show"
+                variants={{ show: { transition: { staggerChildren: 0.08, delayChildren: 0.6 } } }}
+              >
+                {["Active Pipeline", "99.9% Precision", "Global Scale"].map((tag) => (
+                  <motion.span
+                    key={tag}
+                    variants={{
+                      hidden: { opacity: 0, y: 10 },
+                      show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+                    }}
+                    className="px-6 py-2 rounded-full border-2 border-[#034E34]/5 dark:border-white/5 text-[#034E34]/50 dark:text-white/40 text-[10px] font-black uppercase tracking-widest"
+                  >
+                    {tag}
+                  </motion.span>
+                ))}
+              </motion.div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ── Scroll UI ── */}
+        <div className="absolute bottom-12 right-8 md:right-16 flex items-center gap-6">
+          <span className="text-[#034E34]/20 dark:text-white/10 text-[10px] uppercase tracking-[0.5em] font-black rotate-180 [writing-mode:vertical-lr]">
+            Explore Work
+          </span>
+          <div className="w-px h-24 bg-linear-to-b from-[#FFB347] to-transparent" />
+        </div>
+      </section>
 
       {/* ── Sticky scroll ── */}
-      <StickyProjects projects={PROJECTS} itemRefs={itemRefs} />
+      <div ref={stickyRef} className="relative">
+        {/* Watermark sweeps left as you scroll through */}
+        <motion.div
+          style={{ x: stickyWatermarkX }}
+          className="absolute top-1/2 -translate-y-1/2 whitespace-nowrap text-[200px] font-black uppercase text-[#034E34]/[0.06] dark:text-white/[0.05] pointer-events-none select-none will-change-transform z-0"
+        >
+          Computer Vision · NLP · AI · Data · Machine Learning
+        </motion.div>
+        <StickyProjects projects={PROJECTS} itemRefs={itemRefs} />
+      </div>
 
       {/* ── Filter grid ── */}
-      <FilterGrid projects={PROJECTS} tags={TAGS} onCardClick={scrollToProject} />
+      <div ref={filterRef} className="relative overflow-hidden">
+        {/* Bg tint drifts down slower than content */}
+        <motion.div
+          style={{ y: filterBgY }}
+          className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(3,78,52,0.06),transparent_60%)] dark:bg-[radial-gradient(ellipse_at_top,rgba(255,179,71,0.04),transparent_60%)] pointer-events-none will-change-transform"
+        />
+        <FilterGrid
+          projects={PROJECTS}
+          tags={TAGS}
+          onCardClick={scrollToProject}
+        />
+      </div>
 
       {/* ── CTA ── */}
-        <section
-            ref={containerRef}
-            className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden bg-[#021a11]"
+      <section
+        ref={containerRef}
+        className="relative min-h-screen flex flex-col items-center justify-start overflow-hidden bg-[#E6E6E6] dark:bg-[#021a11]"
+      >
+        {/* Sticky container so content stays in view while scrolling */}
+        <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
+          {/* Light Rays Background */}
+          <div className="absolute inset-0">
+            <LightRays
+              raysOrigin="top-center"
+              raysColor="#FFB347"
+              raysSpeed={0.6}
+              lightSpread={1.2}
+              rayLength={2}
+              pulsating
+              fadeDistance={1.2}
+              saturation={0.8}
+              followMouse
+              mouseInfluence={0.08}
+            />
+          </div>
+
+          {/* Floating Images — start centered, fly out on scroll */}
+          <div className="absolute inset-0 pointer-events-none">
+            {/* Top Left → flies left+up */}
+            <motion.img
+              style={{ x: xLeft, y: yUp, opacity: imgOpacity }}
+              src={imgAuto}
+              className="absolute top-[20%] left-[20%] w-48 md:w-64 aspect-square object-cover rounded-2xl border border-white/10 shadow-2xl will-change-transform"
+            />
+
+            {/* Top Right → flies right+up */}
+            <motion.img
+              style={{ x: xRight, y: yUp, opacity: imgOpacity }}
+              src={imgNLP}
+              className="absolute top-[15%] right-[20%] w-40 md:w-72 aspect-video object-cover rounded-2xl border border-white/10 shadow-2xl will-change-transform"
+            />
+
+            {/* Bottom Left → flies left+down */}
+            <motion.img
+              style={{ x: xLeft, y: yDown, opacity: imgOpacity }}
+              src={imgAI}
+              className="absolute bottom-[20%] left-[15%] w-36 md:w-60 aspect-square object-cover rounded-2xl border border-white/10 will-change-transform"
+            />
+
+            {/* Bottom Right → flies right+down */}
+            <motion.img
+              style={{ x: xRight, y: yDown, opacity: imgOpacity }}
+              src={imgML}
+              className="absolute bottom-[15%] right-[15%] w-48 md:w-80 aspect-video object-cover rounded-2xl border border-white/10 will-change-transform"
+            />
+
+            {/* Center accent → flies left */}
+            <motion.img
+              style={{ x: xLeft, opacity: imgOpacity }}
+              src={imgCV}
+              className="absolute top-[42%] left-[8%] w-24 md:w-44 aspect-square object-cover rounded-xl opacity-60 will-change-transform"
+            />
+
+            {/* Center accent right → flies right */}
+            <motion.img
+              style={{ x: xRight, opacity: imgOpacity }}
+              src={imgGenealogy}
+              className="absolute top-[42%] right-[8%] w-24 md:w-44 aspect-square object-cover rounded-xl opacity-60 will-change-transform"
+            />
+          </div>
+
+          {/* Center Text — fades in as images leave */}
+          <motion.div
+            style={{ opacity: textOpacity, y: textY }}
+            className="relative z-10 text-center px-8 flex flex-col items-center"
+          >
+            <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.4em] mb-10">
+              Start a Project
+            </p>
+
+            <h2 className="text-5xl md:text-8xl text-[#034E34] dark:text-white font-black leading-none tracking-tighter uppercase max-w-4xl">
+              Your project
+              <br />
+              could be <span className="text-[#FFB347]">next.</span>
+            </h2>
+
+            <p className="mt-10 text-[#034E34]/60 dark:text-gray-400 max-w-md leading-relaxed text-lg mb-12">
+              Tell us about your data challenge and we'll scope a solution
+              within 48 hours.
+            </p>
+
+            <Link
+              to="/contact"
+              className="group relative overflow-hidden bg-[#FFB347] text-[#021a11] px-8 py-3 rounded-full font-bold text-md transition-all duration-300 hover:shadow-[0_0_40px_8px_rgba(255,179,71,0.3)] hover:-translate-y-1"
             >
-            {/* Sticky container so content stays in view while scrolling */}
-            <div className="sticky top-0 h-screen w-full flex items-center justify-center overflow-hidden">
-
-                {/* Floating Images — start centered, fly out on scroll */}
-                <div className="absolute inset-0 pointer-events-none">
-
-                {/* Top Left → flies left+up */}
-                <motion.img
-                    style={{ x: xLeft, y: yUp, opacity: imgOpacity }}
-                    src={imgAuto}
-                    className="absolute top-[20%] left-[20%] w-48 md:w-64 aspect-square object-cover rounded-2xl border border-white/10 shadow-2xl"
-                />
-
-                {/* Top Right → flies right+up */}
-                <motion.img
-                    style={{ x: xRight, y: yUp, opacity: imgOpacity }}
-                    src={imgNLP}
-                    className="absolute top-[15%] right-[20%] w-40 md:w-72 aspect-video object-cover rounded-2xl border border-white/10 shadow-2xl"
-                />
-
-                {/* Bottom Left → flies left+down */}
-                <motion.img
-                    style={{ x: xLeft, y: yDown, opacity: imgOpacity }}
-                    src={imgAI}
-                    className="absolute bottom-[20%] left-[15%] w-36 md:w-60 aspect-square object-cover rounded-2xl border border-white/10"
-                />
-
-                {/* Bottom Right → flies right+down */}
-                <motion.img
-                    style={{ x: xRight, y: yDown, opacity: imgOpacity }}
-                    src={imgML}
-                    className="absolute bottom-[15%] right-[15%] w-48 md:w-80 aspect-video object-cover rounded-2xl border border-white/10"
-                />
-
-                {/* Center accent → flies left */}
-                <motion.img
-                    style={{ x: xLeft, opacity: imgOpacity }}
-                    src={imgCV}
-                    className="absolute top-[42%] left-[8%] w-24 md:w-44 aspect-square object-cover rounded-xl opacity-60"
-                />
-
-                {/* Center accent right → flies right */}
-                <motion.img
-                    style={{ x: xRight, opacity: imgOpacity }}
-                    src={imgGenealogy}
-                    className="absolute top-[42%] right-[8%] w-24 md:w-44 aspect-square object-cover rounded-xl opacity-60"
-                />
-                </div>
-
-                {/* Center Text — fades in as images leave */}
-                <motion.div
-                style={{ opacity: textOpacity, y: textY }}
-                className="relative z-10 text-center px-8 flex flex-col items-center"
-                >
-                <p className="text-xs font-bold text-[#FFB347] uppercase tracking-[0.4em] mb-10">
-                    Start a Project
-                </p>
-
-                <h2 className="text-5xl md:text-8xl font-black leading-none tracking-tighter uppercase max-w-4xl">
-                    Your project<br />could be <span className="text-[#FFB347]">next.</span>
-                </h2>
-
-                <p className="mt-10 text-gray-400 max-w-md leading-relaxed text-lg mb-12">
-                    Tell us about your data challenge and we'll scope a solution within 48 hours.
-                </p>
-
-                <Link 
-                    to="/contact" 
-                    className="group relative overflow-hidden bg-[#FFB347] text-[#021a11] px-8 py-3 rounded-full font-bold text-md transition-all duration-300 hover:shadow-[0_0_40px_8px_rgba(255,179,71,0.3)] hover:-translate-y-1"
-                >
-                    <span className="relative z-10">Get In Touch Now</span>
-                    <div className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500" />
-                </Link>
-                </motion.div>
-
-            </div>
-        </section>
-
+              <span className="relative z-10">Get In Touch Now</span>
+              <div className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500" />
+            </Link>
+          </motion.div>
+        </div>
+      </section>
     </div>
-  )
+  );
 }
 
 

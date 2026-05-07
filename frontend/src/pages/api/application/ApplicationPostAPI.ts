@@ -9,7 +9,7 @@ export interface SubmissionData {
   phone: string;
   address: string;
   gender: string;
-  dob: Date;
+  dob: Date | null;
   country: string;
   position: string[]; // Array of Position IDs
 }

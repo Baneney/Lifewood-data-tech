@@ -759,7 +759,7 @@ export default function Overview() {
 
   return (
     <div
-      className="space-y-8 max-w-7xl mx-auto pb-12 min-h-screen"
+      className="space-y-8 pb-12 min-h-screen"
       style={{ backgroundColor: "var(--admin-bg)" }}
     >
       {/* Header */}

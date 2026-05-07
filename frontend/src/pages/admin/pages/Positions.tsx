@@ -75,9 +75,13 @@ const statusConfig: Record<string, { label: string; className: string }> = {
   },
   urgent: {
     label: "Urgent",
-    // Using Amber: It stands out as a priority but is distinct from Red (Closed)
     className:
       "border-amber-200 bg-amber-50 text-amber-700 animate-pulse-subtle",
+  },
+  onhold: {
+    label: "OnHold",
+    // Blue indicates a process that is temporarily paused but not terminated
+    className: "border-blue-200 bg-blue-50 text-blue-700",
   },
 };
 
@@ -352,10 +356,13 @@ export default function Positions() {
     <div className="space-y-4">
       {/* 1. TOP HEADER SECTION */}
       <div className="pb-6">
-        <h1 className="text-2xl font-bold text-[#046241] tracking-tight">
+        <h1 className="text-4xl font-bold text-[#046241] tracking-tight">
           Positions Management
         </h1>
-        <p className="text-sm mt-1" style={{ color: "var(--admin-text-muted)" }}>
+        <p
+          className="text-sm mt-1"
+          style={{ color: "var(--admin-text-muted)" }}
+        >
           Review and manage the current available positions.
         </p>
       </div>
@@ -370,11 +377,16 @@ export default function Positions() {
               key={label}
               className={cn(
                 "group relative rounded-2xl border p-6 shadow-md hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden cursor-default",
-                isUrgent && value > 0 && "border-amber-200 shadow-md shadow-amber-500/10",
+                isUrgent &&
+                  value > 0 &&
+                  "border-amber-200 shadow-md shadow-amber-500/10",
               )}
               style={{
                 backgroundColor: "var(--admin-surface)",
-                borderColor: isUrgent && value > 0 ? undefined : "var(--admin-border-soft)",
+                borderColor:
+                  isUrgent && value > 0
+                    ? undefined
+                    : "var(--admin-border-soft)",
               }}
             >
               <div
@@ -464,7 +476,10 @@ export default function Positions() {
                   />
                 </div>
 
-                <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "var(--admin-text-muted)" }}>
+                <p
+                  className="text-[10px] font-black uppercase tracking-widest mb-3"
+                  style={{ color: "var(--admin-text-muted)" }}
+                >
                   {label}
                 </p>
 
@@ -472,7 +487,7 @@ export default function Positions() {
                 <div className="flex flex-col gap-1.5">
                   <div
                     className={cn(
-                      "h-[2px] w-6 bg-[#FFB347] group-hover:w-full transition-all duration-500 rounded-full",
+                      "h-0.5 w-6 bg-[#FFB347] group-hover:w-full transition-all duration-500 rounded-full",
                       isUrgent && value > 0 && "bg-amber-500",
                     )}
                   />
@@ -517,9 +532,10 @@ export default function Positions() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="open">Open</SelectItem>
-              <SelectItem value="closed">Closed</SelectItem>
               <SelectItem value="urgent">Urgent</SelectItem>
+              <SelectItem value="open">Open</SelectItem>
+              <SelectItem value="onhold">OnHold</SelectItem>
+              <SelectItem value="closed">Closed</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -534,7 +550,13 @@ export default function Positions() {
         </Button>
       </div>
 
-      <div className="rounded-xl shadow-sm overflow-hidden" style={{ backgroundColor: "var(--admin-surface)", border: "1px solid var(--admin-border-soft)" }}>
+      <div
+        className="rounded-xl shadow-sm overflow-hidden"
+        style={{
+          backgroundColor: "var(--admin-surface)",
+          border: "1px solid var(--admin-border-soft)",
+        }}
+      >
         <DataTable
           columns={columns(handleEditClick)}
           data={currentTableData}
@@ -542,7 +564,10 @@ export default function Positions() {
         />
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between px-4 py-3" style={{ borderTop: "1px solid var(--admin-border-soft)" }}>
+        <div
+          className="flex items-center justify-between px-4 py-3"
+          style={{ borderTop: "1px solid var(--admin-border-soft)" }}
+        >
           <div className="text-xs" style={{ color: "var(--admin-text-muted)" }}>
             Showing {startIndex + 1} to{" "}
             {Math.min(endIndex, filteredPositions.length)} of{" "}
@@ -667,9 +692,10 @@ export default function Positions() {
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="open">Open</SelectItem>
-                      <SelectItem value="closed">Closed</SelectItem>
                       <SelectItem value="urgent">Urgent</SelectItem>
+                      <SelectItem value="open">Open</SelectItem>
+                      <SelectItem value="onhold">OnHold</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -738,7 +764,7 @@ export default function Positions() {
                 {isEditMode ? "Confirm Update" : "Create Position"}
               </AlertDialogTitle>
               <AlertDialogDescription className="py-4 text-md">
-                {isUpdating ? (
+                {isEditMode ? (
                   <>
                     Are you sure you want to update the{" "}
                     <span className="font-semibold text-[#046241]">

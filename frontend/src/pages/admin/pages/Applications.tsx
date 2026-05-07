@@ -513,10 +513,13 @@ export default function Applications() {
   return (
     <div className="space-y-6">
       <div className="pb-6">
-        <h1 className="text-2xl font-bold text-[#046241] tracking-tight">
+        <h1 className="text-4xl font-bold text-[#046241] tracking-tight">
           Application Tracker
         </h1>
-        <p className="text-sm mt-1" style={{ color: "var(--admin-text-muted)" }}>
+        <p
+          className="text-sm mt-1"
+          style={{ color: "var(--admin-text-muted)" }}
+        >
           Manage and track job applications across positions
         </p>
       </div>
@@ -574,15 +577,22 @@ export default function Applications() {
                   <span
                     className={cn(
                       "text-4xl font-black tracking-tighter italic transition-colors",
-                      isActive ? "text-[#034E34]" : "group-hover:text-[#034E34]",
+                      isActive
+                        ? "text-[#034E34]"
+                        : "group-hover:text-[#034E34]",
                     )}
-                    style={{ color: isActive ? undefined : "var(--admin-text)" }}
+                    style={{
+                      color: isActive ? undefined : "var(--admin-text)",
+                    }}
                   >
                     {value}
                   </span>
                   <span className="w-1.5 h-1.5 rounded-full bg-[#FFB347] mb-1" />
                 </div>
-                <p className="text-[10px] font-black uppercase tracking-widest mb-3" style={{ color: "var(--admin-text-muted)" }}>
+                <p
+                  className="text-[10px] font-black uppercase tracking-widest mb-3"
+                  style={{ color: "var(--admin-text-muted)" }}
+                >
                   {label}
                 </p>
                 <div className="flex flex-col gap-1.5">
@@ -636,7 +646,13 @@ export default function Applications() {
       </div>
 
       {/* Main Table Container */}
-      <div className="rounded-xl shadow-sm overflow-hidden" style={{ backgroundColor: "var(--admin-surface)", border: "1px solid var(--admin-border-soft)" }}>
+      <div
+        className="rounded-xl shadow-sm overflow-hidden"
+        style={{
+          backgroundColor: "var(--admin-surface)",
+          border: "1px solid var(--admin-border-soft)",
+        }}
+      >
         <DataTable
           columns={columns}
           data={currentTableData}
@@ -644,7 +660,10 @@ export default function Applications() {
         />
 
         {/* Pagination Footer */}
-        <div className="flex items-center justify-between px-4 py-4" style={{ borderTop: "1px solid var(--admin-border-soft)" }}>
+        <div
+          className="flex items-center justify-between px-4 py-4"
+          style={{ borderTop: "1px solid var(--admin-border-soft)" }}
+        >
           <div className="text-sm" style={{ color: "var(--admin-text-muted)" }}>
             Showing {startIndex + 1} to{" "}
             {Math.min(endIndex, filteredData.length)} of {filteredData.length}{" "}
@@ -714,8 +733,9 @@ export default function Applications() {
         isOpen={confirmOpen}
         onClose={() => setConfirmOpen(false)}
         onConfirm={handleConfirmUpdate}
-        title="Change Application Status?"
-        description={`Are you sure you want to move this applicant to "${pendingUpdate?.status}"? This action will be logged in the system.`}
+        title="Update Application"
+        description={`Are you sure you want to update this application?`}
+        confirmClassName="bg-[#046241] hover:bg-[#133020]"
       />
     </div>
   );

@@ -23,7 +23,7 @@ import {
   checkexistingApplication,
   checkExistingEmailPhone,
 } from "@/pages/api/applicant/applicantFetchAPI";
-import { useFetchPositions } from "./api/application/ApplicationFetchAPI";
+import { useFetchCareerPositions } from "./api/position/positionFetchAPI";
 
 
 
@@ -125,7 +125,7 @@ export default function ApplicationForm() {
   const totalSteps = 3;
 
   // Hooks
-  const { positions } = useFetchPositions();
+  const { positions } = useFetchCareerPositions();
   const { formData, handleInputChange } = useForm({
     fname: "",
     lname: "",

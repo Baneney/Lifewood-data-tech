@@ -8,6 +8,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { cn } from "@/lib/utils";
 
 interface ConfirmModalProps {
   isOpen: boolean;
@@ -15,6 +16,8 @@ interface ConfirmModalProps {
   onConfirm: () => void;
   title?: string;
   description?: string;
+  cancelClassName?: string;
+  confirmClassName?: string;
 }
 
 export function ConfirmModal({
@@ -23,6 +26,8 @@ export function ConfirmModal({
   onConfirm,
   title = "Are you absolutely sure?",
   description = "This action will update the application status and notify the system.",
+  cancelClassName,
+  confirmClassName,
 }: ConfirmModalProps) {
   return (
     <AlertDialog open={isOpen} onOpenChange={onClose}>
@@ -32,10 +37,15 @@ export function ConfirmModal({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel className="rounded-lg">Cancel</AlertDialogCancel>
+          <AlertDialogCancel className={cn("rounded-lg", cancelClassName)}>
+            Cancel
+          </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="bg-[#417256] hover:bg-[#325a43] rounded-lg"
+            className={cn(
+              "bg-[#417256] hover:bg-[#325a43] rounded-lg",
+              confirmClassName,
+            )}
           >
             Continue
           </AlertDialogAction>

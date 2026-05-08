@@ -6,7 +6,11 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const app = express();
-app.use(cors()); // Allows your React app to talk to this server
+app.use(cors({
+  origin: [process.env.FRONTEND_URL || 'http://localhost:5173'],
+  methods: ['GET', 'POST'],
+  credentials: true
+}));// Allows your React app to talk to this server
 app.use(express.json());
 
 // 1. Setup the Email Transporter

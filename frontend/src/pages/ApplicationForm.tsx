@@ -18,12 +18,12 @@ import { useForm } from "@/hooks/useForm";
 import { formatToDBDate } from "@/helpers/dateFormatter";
 
 // API
-import { usePostApplications } from "./api/application/ApplicationPostAPI";
+import { usePostApplications } from "../api/application/ApplicationPostAPI";
 import {
   checkexistingApplication,
   checkExistingEmailPhone,
-} from "@/pages/api/applicant/applicantFetchAPI";
-import { useFetchCareerPositions } from "./api/position/positionFetchAPI";
+} from "@/api/applicant/applicantFetchAPI";
+import { useFetchCareerPositions } from "../api/position/positionFetchAPI";
 
 
 

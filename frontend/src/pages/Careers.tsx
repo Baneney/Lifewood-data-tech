@@ -19,8 +19,8 @@ import { toast } from "sonner";
 import {
   useTrackApplication,
   type ApplicationTrackingDataType,
-} from "./api/applicant/applicantFetchAPI";
-import { useFetchPositions } from "./api/application/ApplicationFetchAPI";
+} from "../api/applicant/applicantFetchAPI";
+import { useFetchPositions } from "../api/application/ApplicationFetchAPI";
 
 // --- TYPES ---
 type ApplicationWithLogs = ApplicationTrackingDataType & {

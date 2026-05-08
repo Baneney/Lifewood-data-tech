@@ -55,11 +55,11 @@ import { useLoadingBar } from "@/components/LoadingBarContext";
 import {
   useFetchPositions,
   type PositionDataType,
-} from "../../api/application/ApplicationFetchAPI";
+} from "../../../api/application/ApplicationFetchAPI";
 // update
-import { useUpdatePosition } from "../../api/position/positionUpdateAPI";
+import { useUpdatePosition } from "../../../api/position/positionUpdateAPI";
 //post
-import { usePostPosition } from "../../api/position/positionPostAPI";
+import { usePostPosition } from "../../../api/position/positionPostAPI";
 
 
 const ITEMS_PER_PAGE = 10;

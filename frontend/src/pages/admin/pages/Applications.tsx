@@ -30,8 +30,8 @@ import { Textarea } from "@/components/ui/textarea";
 
 
 // API Hooks
-import { usePostLogs } from "../../api/logs/logPostAPI";
-import { useApplications, type ApplicationDataType } from "../../api/application/ApplicationFetchAPI";
+import { usePostLogs } from "../../../api/logs/logPostAPI";
+import { useApplications, type ApplicationDataType } from "../../../api/application/ApplicationFetchAPI";
 
 // Helpers & Hooks
 import { capitalize } from "@/helpers/capitalize";

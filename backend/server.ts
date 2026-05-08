@@ -16,7 +16,7 @@ app.use(express.json());
 // 1. Setup the Email Transporter
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 587,
+  port: 2525,
   secure: false, // Must be false for port 587
   auth: {
     user: process.env.SMTP_USER,

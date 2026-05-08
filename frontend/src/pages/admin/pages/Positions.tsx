@@ -1,5 +1,5 @@
 import { type ColumnDef } from "@tanstack/react-table";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
 //components
@@ -48,6 +48,7 @@ import { Edit, Loader2, Plus, Search, Briefcase, CheckCircle, XCircle, AlertCirc
 
 //helper/hooks
 import { useForm } from "@/hooks/useForm";
+import { useLoadingBar } from "@/components/LoadingBarContext";
 
 //REQUESTTTTT
 //fetch
@@ -172,6 +173,7 @@ const columns = (
 export default function Positions() {
   const { positions, isLoading, refetch } = useFetchPositions();
   const [currentPage, setCurrentPage] = useState(1);
+  const { setLoading } = useLoadingBar();
 
   //search state
   const [searchTerm, setSearchTerm] = useState("");
@@ -185,6 +187,9 @@ export default function Positions() {
 
   // Loading state
   const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => { setLoading(isLoading || isUpdating); }, [isLoading, isUpdating]);
+
 
   // tate to track if creating or editing
   const [isEditMode, setIsEditMode] = useState(true);
@@ -292,9 +297,26 @@ export default function Positions() {
     setIsUpdating(true);
     try {
       if (isEditMode) {
+        const duplicate = positions.some(
+          (p) => p.id !== formData.id &&
+            p.title.trim().toLowerCase() === formData.title.trim().toLowerCase()
+        );
+        if (duplicate) {
+          toast.error("Position already exists");
+          setIsUpdating(false);
+          return;
+        }
         await useUpdatePosition(formData);
         toast.success("Position updated successfully");
       } else {
+        const duplicate = positions.some(
+          (p) => p.title.trim().toLowerCase() === formData.title.trim().toLowerCase()
+        );
+        if (duplicate) {
+          toast.error("Position already exists");
+          setIsUpdating(false);
+          return;
+        }
         await usePostPosition(formData);
         toast.success("Position created successfully");
       }

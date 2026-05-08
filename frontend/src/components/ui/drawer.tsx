@@ -7,7 +7,7 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import { ChevronRight, Info } from "lucide-react";
+import { ChevronRight } from "lucide-react";
 import { type ReactNode } from "react";
 
 interface DetailsDrawerProps {

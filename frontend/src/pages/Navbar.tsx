@@ -23,34 +23,39 @@ export default function Navbar() {
   }, [])
 
   return (
-    <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "backdrop-blur-md shadow-sm" : "bg-transparent"}`}
+    <nav
+      className={`fixed top-0 w-full z-50 transition-all duration-300 ${scrolled ? "backdrop-blur-md shadow-sm" : "bg-transparent"}`}
       style={scrolled ? { backgroundColor: "var(--site-bg)" } : undefined}
     >
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-
         <NavLink to="/" onClick={() => setOpen(false)}>
           <img src={logo} alt="Lifewood Logo" className="h-8 w-auto" />
         </NavLink>
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-1 text-sm font-medium">
-          {links.map(l => (
+          {links.map((l) => (
             <li key={l.label}>
               <NavLink
                 to={l.to}
                 end={l.to === "/"}
                 className={({ isActive }) =>
                   `relative px-4 py-2 rounded-full transition-colors duration-200 group
-                  ${isActive
-                    ? "text-[#FFB347]"
-                    : scrolled ? "text-[#034E34] hover:text-[#FFB347]" : "text-white/90 hover:text-white"
+                  ${
+                    isActive
+                      ? "text-[#FFB347]"
+                      : scrolled
+                        ? "text-[#034E34] dark:text-white hover:text-[#FFB347]"
+                        : "text-[#CCCCCC] dark:text-white hover:text-[#FFB347]"
                   }`
                 }
               >
                 {({ isActive }) => (
                   <>
                     {l.label}
-                    <span className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-[#FFB347] rounded-full transition-all duration-300 ${isActive ? "w-4/5" : "w-0 group-hover:w-1/2"}`} />
+                    <span
+                      className={`absolute bottom-0 left-1/2 -translate-x-1/2 h-0.5 bg-[#FFB347] rounded-full transition-all duration-300 ${isActive ? "w-4/5" : "w-0 group-hover:w-1/2"}`}
+                    />
                   </>
                 )}
               </NavLink>
@@ -69,17 +74,34 @@ export default function Navbar() {
         </div>
 
         {/* Hamburger */}
-        <button className="md:hidden flex flex-col gap-1.5 p-1" onClick={() => setOpen(!open)}>
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "rotate-45 translate-y-2" : ""}`} />
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "opacity-0" : ""}`} />
-          <span className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "-rotate-45 -translate-y-2" : ""}`} />
+        <button
+          className="md:hidden flex flex-col gap-1.5 p-1"
+          onClick={() => setOpen(!open)}
+        >
+          <span
+            className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "rotate-45 translate-y-2" : ""}`}
+          />
+          <span
+            className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "opacity-0" : ""}`}
+          />
+          <span
+            className={`block h-0.5 w-6 rounded-full transition-all duration-300 ${scrolled ? "bg-[#034E34]" : "bg-white"} ${open ? "-rotate-45 -translate-y-2" : ""}`}
+          />
         </button>
       </div>
 
       {/* Mobile drawer */}
-      <div className={`md:hidden overflow-hidden transition-all duration-300 ${open ? "max-h-96" : "max-h-0"}`}>
-        <div className="backdrop-blur-md border-t px-6 py-4 flex flex-col gap-1" style={{ backgroundColor: "var(--site-bg)", borderColor: "var(--site-border)" }}>
-          {links.map(l => (
+      <div
+        className={`md:hidden overflow-hidden transition-all duration-300 ${open ? "max-h-96" : "max-h-0"}`}
+      >
+        <div
+          className="backdrop-blur-md border-t px-6 py-4 flex flex-col gap-1"
+          style={{
+            backgroundColor: "var(--site-bg)",
+            borderColor: "var(--site-border)",
+          }}
+        >
+          {links.map((l) => (
             <NavLink
               key={l.label}
               to={l.to}
@@ -92,11 +114,15 @@ export default function Navbar() {
               {l.label}
             </NavLink>
           ))}
-          <NavLink to="/contact" onClick={() => setOpen(false)} className="mt-2 bg-[#034E34] text-white px-4 py-3 rounded-xl text-sm font-semibold text-center hover:bg-[#417256] transition-colors">
+          <NavLink
+            to="/contact"
+            onClick={() => setOpen(false)}
+            className="mt-2 bg-[#034E34] text-white px-4 py-3 rounded-xl text-sm font-semibold text-center hover:bg-[#417256] transition-colors"
+          >
             Get Started
           </NavLink>
         </div>
       </div>
     </nav>
-  )
+  );
 }

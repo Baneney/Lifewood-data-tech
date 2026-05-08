@@ -1,6 +1,6 @@
 import { type ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
 
 // UI Components
@@ -33,6 +33,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { capitalize } from "@/helpers/capitalize";
 import { useAdmin } from "@/hooks/use-admin";
 import { calculateBday } from "@/helpers/calculateBday";
+import { useLoadingBar } from "@/components/LoadingBarContext";
 
 // API Hooks
 import { usePostLogs } from "../../api/logs/logPostAPI";
@@ -383,6 +384,9 @@ export default function Applications() {
   const { applications, isLoading, refetch } = useApplications();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { adminId } = useAdmin();
+  const { setLoading } = useLoadingBar();
+
+  useEffect(() => { setLoading(isLoading || isSubmitting); }, [isLoading, isSubmitting]);
 
   // Search and Filter State
   const [searchTerm, setSearchTerm] = useState("");
@@ -461,6 +465,7 @@ export default function Applications() {
     if (!pendingUpdate || !adminId) return;
     try {
       setIsSubmitting(true);
+      setLoading(true);
       await usePostLogs({
         status: pendingUpdate.status,
         potential: pendingUpdate.potential,
@@ -497,6 +502,7 @@ export default function Applications() {
       toast.error("Failed to update status");
     } finally {
       setIsSubmitting(false);
+      setLoading(false);
       setConfirmOpen(false);
     }
   };

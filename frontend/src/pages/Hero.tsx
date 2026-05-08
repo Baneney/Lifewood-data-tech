@@ -53,8 +53,8 @@ export default function Home() {
   // ── Projects: bg text sweeps horizontally, scanner line moves across ──────
   const { scrollYProgress: projectsP } = useScroll({ target: projectsRef, offset: ["start start", "end end"] });
   const bgTextX  = useTransform(projectsP, [0, 1], ["0%", "-30%"]);
-  const scannerX = useTransform(projectsP, [0, 1], ["-200px", "95vw"]);
-  const floatY   = useTransform(projectsP, [0, 1], ["0%", "-40%"]);
+  const scannerX = useTransform(projectsP, [0, 1], ["-200px", "100vw"]);
+
 
   useEffect(() => {
     if (!showSplash) return;
@@ -115,7 +115,7 @@ export default function Home() {
         </motion.div>
 
         {/* Gradient mask */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#021a11] from-[15%] via-[#021a11]/60 via-[40%] to-transparent z-[2] pointer-events-none" />
+        {/* <div className="absolute inset-0 bg-gradient-to-r from-[#021a11] from-[15%] via-[#021a11]/60 via-[40%] to-transparent z-[2] pointer-events-none" /> */}
 
         {/* Content — lifts up and fades as hero exits viewport */}
         <motion.div
@@ -357,7 +357,7 @@ export default function Home() {
               </h2>
             </div>
             <Link to="/projects" className="group px-10 py-5 bg-[#034E34] text-white font-black text-xs uppercase tracking-widest hover:bg-[#FFB347] hover:text-[#021a11] transition-all duration-500">
-              View Archive →
+              View All →
             </Link>
           </div>
 

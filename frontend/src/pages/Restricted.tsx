@@ -26,7 +26,7 @@ export default function RestrictedPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#021a11] flex items-center justify-center overflow-hidden relative px-4">
+    <div className="min-h-screen flex items-center justify-center overflow-hidden relative">
       {/* THE VIDEO LAYER (Handles both Visuals and Audio) */}
       <video
         ref={videoRef}
@@ -43,7 +43,7 @@ export default function RestrictedPage() {
       {/* <div className="absolute inset-0 bg-linear-to-b from-[#021a11]/80 via-[#021a11]/40 to-[#021a11] pointer-events-none" /> */}
 
       {/* CONTENT CARD */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         className="relative z-10 text-center"
@@ -57,7 +57,7 @@ export default function RestrictedPage() {
         <p className="text-white/40 text-sm max-w-xs mx-auto">
           You do not have the required permissions.
         </p>
-      </motion.div>
+      </motion.div> */}
     </div>
   );
 }

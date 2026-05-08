@@ -1,4 +1,4 @@
-import { motion, AnimatePresence, type Variants } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 
 const loaderVariants: Variants = {
   initial: { opacity: 0 },

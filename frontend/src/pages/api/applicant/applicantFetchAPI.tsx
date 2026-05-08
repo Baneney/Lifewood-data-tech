@@ -1,33 +1,6 @@
 import { supabase } from "@/supabaseClient";
 import { useState } from "react";
 
-// export async function checkExistingEmailPhone(
-//   email: string,
-//   phone: string,
-//   fname: string,
-//   lname: string,
-//   dob: string,
-// ) {
-//   const cleanEmail = email.trim().toLowerCase();
-//   const cleanPhone = phone.trim().toLowerCase();
-//   const cleanFname = fname.trim().toLowerCase();
-//   const cleanLname = lname.trim().toLowerCase();
-
-//   const { data: conflict, error: fetchError } = await supabase
-//     .from("applicant")
-//     .select("email, phone, fname, lname, dob")
-//     // Find anyone with the same email OR phone...
-//     .or(`email.eq.${cleanEmail},phone.eq.${cleanPhone}`)
-//     // ...BUT exclude the person if the name and DOB match perfectly
-//     .not("fname", "ilike", cleanFname)
-//     .not("lname", "ilike", cleanLname)
-//     .not("dob", "eq", dob)
-//     .maybeSingle();
-
-//   if (fetchError) throw fetchError;
-
-//   return conflict;
-// }
 
 export async function checkExistingEmailPhone(
   email: string,

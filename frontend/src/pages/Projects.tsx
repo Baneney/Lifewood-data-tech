@@ -250,7 +250,11 @@ export default function Projects() {
                     className="block"
                     initial={{ y: "110%" }}
                     animate={{ y: "0%" }}
-                    transition={{ duration: 0.7, delay: 0.2 + i * 0.12, ease: [0.16, 1, 0.3, 1] }}
+                    transition={{
+                      duration: 0.7,
+                      delay: 0.2 + i * 0.12,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
                   >
                     {line}
                   </motion.span>
@@ -262,13 +266,17 @@ export default function Projects() {
               {/* Subtext */}
               <div className="overflow-hidden">
                 <motion.p
-                  className="text-[#034E34]/70 dark:text-gray-400 text-xl max-w-md leading-relaxed font-medium"
+                  className="text-[#034E34]/70 dark:text-white text-xl max-w-md leading-relaxed font-medium"
                   initial={{ y: "100%", opacity: 0 }}
                   animate={{ y: "0%", opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{
+                    duration: 0.8,
+                    delay: 0.45,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
                 >
                   Turning massive noise into{" "}
-                  <span className="text-[#034E34] dark:text-white font-bold">
+                  <span className="text-[#FFB347] font-bold">
                     structured intelligence.
                   </span>{" "}
                   A curated look at our global data operations.
@@ -280,20 +288,33 @@ export default function Projects() {
                 className="flex flex-wrap gap-3 justify-start md:justify-end"
                 initial="hidden"
                 animate="show"
-                variants={{ show: { transition: { staggerChildren: 0.08, delayChildren: 0.6 } } }}
+                variants={{
+                  show: {
+                    transition: { staggerChildren: 0.08, delayChildren: 0.6 },
+                  },
+                }}
               >
-                {["Active Pipeline", "99.9% Precision", "Global Scale"].map((tag) => (
-                  <motion.span
-                    key={tag}
-                    variants={{
-                      hidden: { opacity: 0, y: 10 },
-                      show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
-                    }}
-                    className="px-6 py-2 rounded-full border-2 border-[#034E34]/5 dark:border-white/5 text-[#034E34]/50 dark:text-white/40 text-[10px] font-black uppercase tracking-widest"
-                  >
-                    {tag}
-                  </motion.span>
-                ))}
+                {["Active Pipeline", "99.9% Precision", "Global Scale"].map(
+                  (tag) => (
+                    <motion.span
+                      key={tag}
+                      variants={{
+                        hidden: { opacity: 0, y: 10 },
+                        show: {
+                          opacity: 1,
+                          y: 0,
+                          transition: {
+                            duration: 0.5,
+                            ease: [0.16, 1, 0.3, 1],
+                          },
+                        },
+                      }}
+                      className="px-6 py-2 rounded-full border-2 border-[#FFB347]/80 text-[#FFB347] text-[10px] font-black uppercase tracking-widest"
+                    >
+                      {tag}
+                    </motion.span>
+                  ),
+                )}
               </motion.div>
             </div>
           </div>

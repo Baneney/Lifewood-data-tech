@@ -25,11 +25,12 @@ import {
   Briefcase,
   LogOut,
   ChevronRight,
-  Settings,
 } from "lucide-react";
 
 import { supabase } from "@/supabaseClient";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { LoadingBarProvider, useLoadingBar } from "@/components/LoadingBarContext";
+import { TopLoadingBar } from "@/components/TopLoadingBar";
 
 import logo from "@/assets/Lifewood-LogoV2.png";
 
@@ -38,8 +39,6 @@ const NAV_MAIN = [
   { label: "Applications", to: "/admin/applications", icon: Users },
   { label: "Positions",    to: "/admin/positions",    icon: Briefcase },
 ];
-
-
 
 function SidebarNav() {
   const { pathname } = useLocation();
@@ -112,22 +111,16 @@ function SidebarNav() {
                         collapsed ? "justify-center" : "gap-4",
                       )}
                     >
-                      {/* Active left bar — only in expanded */}
                       {active && !collapsed && (
                         <span className="absolute left-0 w-0.75 h-5 bg-[#FFB347] rounded-r-full" />
                       )}
-                      {/* Active dot — only in collapsed */}
                       {active && collapsed && (
                         <span className="absolute right-1.5 top-1/2 -translate-y-1/2 w-1 h-1 rounded-full bg-[#FFB347]" />
                       )}
                       <Icon
                         size={collapsed ? 20 : 18}
                         strokeWidth={active ? 2.5 : 2}
-                        className={
-                          active
-                            ? "drop-shadow-[0_0_6px_rgba(255,179,71,0.5)]"
-                            : ""
-                        }
+                        className={active ? "drop-shadow-[0_0_6px_rgba(255,179,71,0.5)]" : ""}
                       />
                       {!collapsed && (
                         <span
@@ -154,7 +147,6 @@ function SidebarNav() {
         style={{ backgroundColor: "var(--admin-sidebar-foot)" }}
       >
         <SidebarMenu className="gap-0">
-          {/* Logout */}
           <SidebarMenuItem>
             <button
               onClick={handleLogout}
@@ -177,8 +169,9 @@ function SidebarNav() {
   );
 }
 
-export default function AdminLayout() {
+function AdminLayoutInner() {
   const { pathname } = useLocation();
+  const { loading } = useLoadingBar();
 
   const crumb =
     pathname === "/admin"
@@ -198,12 +191,14 @@ export default function AdminLayout() {
 
         <SidebarInset style={{ backgroundColor: "var(--admin-bg)" }}>
           <header
-            className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b backdrop-blur-md px-8"
+            className="sticky top-0 z-20 flex h-16 items-center gap-4 border-b backdrop-blur-md px-8 relative"
             style={{
               backgroundColor: "var(--admin-header-bg)",
               borderColor: "var(--admin-header-border)",
             }}
           >
+            <TopLoadingBar loading={loading} />
+
             <nav className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em]" style={{ color: "var(--admin-text-faint)" }}>
               <span>Admin</span>
               <ChevronRight size={10} strokeWidth={3} />
@@ -230,5 +225,13 @@ export default function AdminLayout() {
         </SidebarInset>
       </SidebarProvider>
     </TooltipProvider>
+  );
+}
+
+export default function AdminLayout() {
+  return (
+    <LoadingBarProvider>
+      <AdminLayoutInner />
+    </LoadingBarProvider>
   );
 }

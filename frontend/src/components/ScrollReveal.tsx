@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useMemo, ReactNode, RefObject } from 'react';
+import React, { useEffect, useRef, useMemo, type ReactNode, type RefObject } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -29,9 +29,9 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
   rotationEnd = 'bottom bottom',
   wordAnimationEnd = 'bottom bottom'
 }) => {
-  const containerRef = useRef<HTMLHeadingElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  const processChildren = (node: ReactNode): ReactNode => {
+  const processChildren = React.useCallback((node: ReactNode): ReactNode => {
     if (typeof node === 'string') {
       return node.split(/(\s+)/).map((word, index) => {
         if (word.match(/^\s+$/)) return word;
@@ -43,20 +43,16 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
       });
     }
 
-    if (React.isValidElement(node)) {
-      const element = node as React.ReactElement;
-      if (element.props.children) {
-        return React.cloneElement(element, {
-          ...element.props,
-          children: React.Children.map(element.props.children, processChildren)
-        });
+    if (React.isValidElement<{ children?: ReactNode }>(node)) {
+      if (node.props.children) {
+        return React.cloneElement(node, {}, React.Children.map(node.props.children, processChildren));
       }
     }
 
     return node;
-  };
+  }, []);
 
-  const splitContent = useMemo(() => processChildren(children), [children]);
+  const splitContent = useMemo(() => processChildren(children), [children, processChildren]);
 
   useEffect(() => {
     const el = containerRef.current;
@@ -119,7 +115,9 @@ const ScrollReveal: React.FC<ScrollRevealProps> = ({
     }
 
     return () => {
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+      ScrollTrigger.getAll()
+        .filter(trigger => trigger.vars.trigger === el)
+        .forEach(trigger => trigger.kill());
     };
   }, [scrollContainerRef, enableBlur, baseRotation, baseOpacity, rotationEnd, wordAnimationEnd, blurStrength]);
 

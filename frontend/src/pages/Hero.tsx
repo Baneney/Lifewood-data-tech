@@ -87,6 +87,7 @@ export default function Home() {
                 animationDuration={0.5}
                 pauseBetweenAnimations={0.6}
                 blurAmount={6}
+                textColor="white"
               />
             </motion.div>
             <motion.p
@@ -170,7 +171,9 @@ export default function Home() {
               className="absolute top-0 left-0 w-full h-1/3 bg-[#FFB347]"
             />
           </div>
-          <span className="text-white/30 text-[10px] uppercase tracking-[0.3em] font-bold">Scroll</span>
+          <span className="text-white/30 text-[10px] uppercase tracking-[0.3em] font-bold">
+            Scroll
+          </span>
         </motion.div>
       </section>
 
@@ -178,11 +181,23 @@ export default function Home() {
       <section className="bg-[#034E34] py-5 overflow-hidden">
         <div className="flex gap-16 animate-[marquee_20s_linear_infinite] whitespace-nowrap">
           {[...Array(5)].map((_, i) =>
-            ["Data Annotation","Data Collection","Data Curation","Data Validation","Data Acquisition","Computer Vision","NLP","Machine Learning"].map((s) => (
-              <span key={`${s}-${i}`} className="text-white/70 text-sm font-medium uppercase tracking-widest shrink-0">
+            [
+              "Data Annotation",
+              "Data Collection",
+              "Data Curation",
+              "Data Validation",
+              "Data Acquisition",
+              "Computer Vision",
+              "NLP",
+              "Machine Learning",
+            ].map((s) => (
+              <span
+                key={`${s}-${i}`}
+                className="text-white/70 text-sm font-medium uppercase tracking-widest shrink-0"
+              >
                 {s}
               </span>
-            ))
+            )),
           )}
         </div>
       </section>
@@ -210,17 +225,42 @@ export default function Home() {
         >
           <div className="flex items-end justify-between mb-12">
             <div>
-              <span className="text-[#FFB347] text-xs font-bold uppercase tracking-[0.4em] mb-4 block">What We Do</span>
-              <h2 className="mt-2 text-3xl md:text-4xl font-bold text-[#034E34] dark:text-white">Our Services</h2>
+              <span className="text-[#FFB347] text-xs font-bold uppercase tracking-[0.4em] mb-4 block">
+                What We Do
+              </span>
+              <h2 className="mt-2 text-3xl md:text-4xl font-bold text-[#034E34] dark:text-white">
+                Our Services
+              </h2>
             </div>
-            <Link to="/services" className="hidden md:inline-flex items-center gap-2 text-[#034E34] dark:text-white font-semibold hover:gap-4 transition-all duration-200">
+            <Link
+              to="/services"
+              className="hidden md:inline-flex items-center gap-2 text-[#034E34] dark:text-white font-semibold hover:gap-4 transition-all duration-200"
+            >
               View all <span>→</span>
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-6">
-            <FeaturedCard id="01" title="Data Annotation" tag="Services" video={vidAnnotation} to="/services" />
-            <FeaturedCard id="02" title="Data Collection" tag="Services" video={vidCollection} to="/services" />
-            <FeaturedCard id="03" title="Data Curation" tag="Services" video={vidCuration} to="/services" />
+            <FeaturedCard
+              id="01"
+              title="Data Annotation"
+              tag="Services"
+              video={vidAnnotation}
+              to="/services"
+            />
+            <FeaturedCard
+              id="02"
+              title="Data Collection"
+              tag="Services"
+              video={vidCollection}
+              to="/services"
+            />
+            <FeaturedCard
+              id="03"
+              title="Data Curation"
+              tag="Services"
+              video={vidCuration}
+              to="/services"
+            />
           </div>
         </motion.div>
       </section>
@@ -247,24 +287,44 @@ export default function Home() {
           className="relative z-10 max-w-7xl mx-auto px-6"
         >
           <div className="text-center mb-20">
-            <span className="text-[#C17110] dark:text-[#FFB347] text-xs font-black uppercase tracking-[0.6em]">Our Impact</span>
-            <h2 className="mt-4 text-4xl md:text-6xl font-black text-[#034E34] dark:text-white tracking-tighter">Industry Highlights</h2>
+            <span className="text-[#C17110] dark:text-[#FFB347] text-xs font-black uppercase tracking-[0.6em]">
+              Our Impact
+            </span>
+            <h2 className="mt-4 text-4xl md:text-6xl font-black text-[#034E34] dark:text-white tracking-tighter">
+              Industry Highlights
+            </h2>
             <div className="mt-6 w-24 h-1 bg-[#FFB347] mx-auto rounded-full" />
           </div>
 
           <div className="flex flex-col gap-16">
-            <Highlight img={imgAI} tag="AI Solutions" title="AI Customer Service" desc="We build and annotate datasets that power next-generation AI customer service systems, enabling natural, accurate, and context-aware interactions." to="/projects" />
-            <Highlight img={imgAuto} tag="Automotive" title="Autonomous Driving Technology" desc="Precision-labeled datasets for autonomous vehicle perception — from object detection to lane segmentation at scale." to="/projects" reverse />
-            <Highlight img={imgML} tag="Machine Learning" title="ML Enablement" desc="From raw data acquisition to validated, model-ready datasets — we handle the full pipeline so your team can focus on building." to="/projects" />
+            <Highlight
+              img={imgAI}
+              tag="AI Solutions"
+              title="AI Customer Service"
+              desc="We build and annotate datasets that power next-generation AI customer service systems, enabling natural, accurate, and context-aware interactions."
+              to="/projects"
+            />
+            <Highlight
+              img={imgAuto}
+              tag="Automotive"
+              title="Autonomous Driving Technology"
+              desc="Precision-labeled datasets for autonomous vehicle perception — from object detection to lane segmentation at scale."
+              to="/projects"
+              reverse
+            />
+            <Highlight
+              img={imgML}
+              tag="Machine Learning"
+              title="ML Enablement"
+              desc="From raw data acquisition to validated, model-ready datasets — we handle the full pipeline so your team can focus on building."
+              to="/projects"
+            />
           </div>
         </motion.div>
       </section>
 
       {/* ── STATS ── */}
-      <section
-        ref={statsRef}
-        className="relative bg-[#034E34] overflow-hidden"
-      >
+      <section ref={statsRef} className="relative bg-[#034E34] overflow-hidden">
         {/* Ambient glow blob drifts vertically through the section */}
         <motion.div
           style={{ y: statsGlowY }}
@@ -285,7 +345,10 @@ export default function Home() {
               { value: 50, suffix: "+", label: "Language Capabilities" },
               { value: 56, suffix: "K+", label: "Global Online Resources" },
             ].map((s) => (
-              <div key={s.label} className="group relative py-16 px-8 flex flex-col items-center justify-center transition-all duration-500 overflow-hidden">
+              <div
+                key={s.label}
+                className="group relative py-16 px-8 flex flex-col items-center justify-center transition-all duration-500 overflow-hidden"
+              >
                 <span className="absolute bottom-0 right-0 text-9xl font-black text-white/[0.02] select-none transition-all duration-1000 group-hover:-translate-y-12 group-hover:-translate-x-8 group-hover:text-[#FFB347]/[0.07] group-hover:rotate-6">
                   {s.value}
                 </span>
@@ -325,7 +388,8 @@ export default function Home() {
           <motion.div
             style={{
               x: scannerX,
-              background: "linear-gradient(90deg, transparent, rgba(255,179,71,0.08), rgba(255,179,71,0.35), rgba(255,179,71,0.08), transparent)",
+              background:
+                "linear-gradient(90deg, transparent, rgba(255,179,71,0.08), rgba(255,179,71,0.35), rgba(255,179,71,0.08), transparent)",
             }}
             className="absolute top-0 bottom-0 left-0 w-64 pointer-events-none will-change-transform"
           >
@@ -347,30 +411,51 @@ export default function Home() {
             <div className="max-w-2xl">
               <div className="flex items-center gap-4 mb-6">
                 <div className="h-px w-12 bg-[#FFB347]" />
-                <span className="text-[#C17110] dark:text-[#FFB347] text-xs font-black uppercase tracking-[0.5em]">Selected Works</span>
+                <span className="text-[#C17110] dark:text-[#FFB347] text-xs font-black uppercase tracking-[0.5em]">
+                  Selected Works
+                </span>
               </div>
               <h2 className="text-6xl md:text-8xl font-black text-[#034E34] dark:text-white tracking-tighter leading-[0.85]">
-                Featured<br />
+                Featured
+                <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#034E34] via-[#FFB347] to-[#034E34] bg-[length:200%_auto] animate-gradient-x">
                   Projects.
                 </span>
               </h2>
             </div>
-            <Link to="/projects" className="group px-10 py-5 bg-[#034E34] text-white font-black text-xs uppercase tracking-widest hover:bg-[#FFB347] hover:text-[#021a11] transition-all duration-500">
+            <Link
+              to="/projects"
+              className="group px-10 py-5 bg-[#034E34] text-white font-black text-xs uppercase tracking-widest hover:bg-[#FFB347] hover:text-[#021a11] transition-all duration-500"
+            >
               View All →
             </Link>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
             <div className="lg:mt-0">
-              <InsightCard img={imgNLP} tag="NLP" title="Natural Language Processing" to="/projects" />
+              <InsightCard
+                img={imgNLP}
+                tag="NLP"
+                title="Natural Language Processing"
+                to="/projects"
+              />
             </div>
             <div className="relative lg:mt-32">
               <div className="absolute -inset-6 border border-[#034E34]/5 dark:border-white/5 rounded-[3rem] -z-10" />
-              <InsightCard img={imgCV} tag="Vision" title="Computer Vision Industrial" to="/projects" />
+              <InsightCard
+                img={imgCV}
+                tag="Vision"
+                title="Computer Vision Industrial"
+                to="/projects"
+              />
             </div>
             <div className="lg:mt-16">
-              <InsightCard img={imgExtract} tag="Data" title="Automated Extraction" to="/projects" />
+              <InsightCard
+                img={imgExtract}
+                tag="Data"
+                title="Automated Extraction"
+                to="/projects"
+              />
             </div>
           </div>
         </motion.div>
@@ -382,7 +467,10 @@ export default function Home() {
         <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-[#FFB347]/10 blur-[100px] rounded-full animate-pulse" />
         <div
           className="absolute inset-0 opacity-[0.03] pointer-events-none"
-          style={{ backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`, backgroundSize: "40px 40px" }}
+          style={{
+            backgroundImage: `linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)`,
+            backgroundSize: "40px 40px",
+          }}
         />
 
         <motion.div
@@ -393,10 +481,20 @@ export default function Home() {
           className="relative max-w-4xl mx-auto px-6 text-center"
         >
           <div className="group relative inline-block p-px mb-8 rounded-2xl overflow-hidden shadow-2xl">
-            <div className="absolute inset-[-50%] bg-[conic-gradient(from_0deg,transparent_45%,#FFB347_50%,transparent_55%)] animate-[spin_6s_linear_infinite] blur-xs opacity-40" style={{ willChange: "transform" }} />
-            <div className="absolute -inset-full bg-[conic-gradient(from_0deg,transparent_35%,#FFB347_50%,transparent_65%)] animate-[spin_6s_linear_infinite] opacity-60" style={{ willChange: "transform" }} />
+            <div
+              className="absolute inset-[-50%] bg-[conic-gradient(from_0deg,transparent_45%,#FFB347_50%,transparent_55%)] animate-[spin_6s_linear_infinite] blur-xs opacity-40"
+              style={{ willChange: "transform" }}
+            />
+            <div
+              className="absolute -inset-full bg-[conic-gradient(from_0deg,transparent_35%,#FFB347_50%,transparent_65%)] animate-[spin_6s_linear_infinite] opacity-60"
+              style={{ willChange: "transform" }}
+            />
             <div className="relative p-4 rounded-2xl bg-[#043523] backdrop-blur-3xl border border-white/10 transition-all duration-500 group-hover:scale-105 group-hover:border-[#FFB347]/30">
-              <img src={logoV2} alt="Lifewood" className="h-10 transition-all duration-500 group-hover:brightness-110 group-hover:drop-shadow-[0_0_10px_rgba(255,179,71,0.2)]" />
+              <img
+                src={logoV2}
+                alt="Lifewood"
+                className="h-10 transition-all duration-500 group-hover:brightness-110 group-hover:drop-shadow-[0_0_10px_rgba(255,179,71,0.2)]"
+              />
             </div>
             <div className="absolute inset-0 bg-[#FFB347]/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl pointer-events-none" />
           </div>
@@ -421,7 +519,10 @@ export default function Home() {
               <span className="relative z-10">Get In Touch Now</span>
               <div className="absolute inset-0 bg-white scale-x-0 group-hover:scale-x-100 origin-right transition-transform duration-500" />
             </Link>
-            <Link to="/services" className="text-white font-semibold flex items-center gap-2 hover:text-[#FFB347] transition-colors">
+            <Link
+              to="/services"
+              className="text-white font-semibold flex items-center gap-2 hover:text-[#FFB347] transition-colors"
+            >
               Explore Our Solutions <span>→</span>
             </Link>
           </div>

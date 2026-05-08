@@ -16,17 +16,21 @@ app.use(express.json());
 // 1. Setup the Email Transporter
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
-  port: 2525,
-  secure: false, // Must be false for port 587
+  port: 587,
+  secure: false, // Must be false for 587
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
   },
   tls: {
-    rejectUnauthorized: false // Helps avoid connection issues on cloud hosting
-  }
+    rejectUnauthorized: false,
+    minVersion: "TLSv1.2"
+  },
+  // ADD THESE TIMEOUTS TO STOP THE ETIMEDOUT ERROR
+  connectionTimeout: 20000, // Wait 20 seconds to connect
+  greetingTimeout: 20000,   // Wait 20 seconds for Gmail to say 'Hello'
+  socketTimeout: 25000,     // Wait 25 seconds for data
 });
-
 
 
 

@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
-import { ShieldAlert } from "lucide-react";
-import { motion } from "framer-motion";
+
 
 // Import your asset
 import restrict from "@/assets/restricted/restricted-loop.mp4";

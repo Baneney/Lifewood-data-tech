@@ -160,7 +160,7 @@ export default function Projects() {
 
   // FilterGrid — heading drifts up, bg tint drifts down
   const { scrollYProgress: filterP } = useScroll({ target: filterRef, offset: ["start end", "end start"] });
-  const filterHeadingY = useTransform(filterP, [0, 1], ["80px", "-80px"]);
+  // const filterHeadingY = useTransform(filterP, [0, 1], ["80px", "-80px"]);
   const filterBgY      = useTransform(filterP, [0, 1], ["-8%", "8%"]);
 
   // CTA scroll (existing)

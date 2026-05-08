@@ -36,7 +36,7 @@ import { calculateBday } from "@/helpers/calculateBday";
 import { useLoadingBar } from "@/components/LoadingBarContext";
 
 // API Hooks
-import { usePostLogs } from "../../api/logs/logPostAPI";
+import { usePostLogs } from "@/pages/api/logs/logPostAPI";
 import { useApplications, type ApplicationDataType } from "../../api/application/ApplicationFetchAPI";
 
 

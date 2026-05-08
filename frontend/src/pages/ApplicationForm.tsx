@@ -339,14 +339,16 @@ export default function ApplicationForm() {
         return { title, id: app.id };
       });
 
+      const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
       //triggers sending email to the user
-      await fetch("http://localhost:5000/api/send-confirmation", {
+      await fetch(`${API_BASE_URL}/api/send-confirmation`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           email: formData.email,
           name: `${formData.fname} ${formData.lname}`,
-          applications: applicationDetails, 
+          applications: applicationDetails,
         }),
       });
 

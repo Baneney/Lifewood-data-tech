@@ -146,11 +146,11 @@ export const FormComboCheckbox = React.memo(
             <div className="flex items-center">
               {selectedValues.length > 0 && (
                 <X
-                  className="mr-2 h-4 w-4 shrink-0 opacity-50 hover:opacity-100"
+                  className="mr-2 h-4 w-4 shrink-0 opacity-60"
                   onClick={(e) => { e.stopPropagation(); onValueChange([]); }}
                 />
               )}
-              <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+              <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-100" />
             </div>
           </Button>
         </PopoverTrigger>
@@ -162,7 +162,7 @@ export const FormComboCheckbox = React.memo(
         >
           <Command>
             <CommandInput placeholder="Search options..." />
-            <CommandList className="max-h-64 overflow-auto">
+            <CommandList className="max-h-64 overflow-auto" onWheel={(e) => e.stopPropagation()}>
               <CommandEmpty>No options found.</CommandEmpty>
               <CommandGroup>
                 <CommandItem onSelect={toggleAll} className="flex items-center gap-2 font-semibold border-b">

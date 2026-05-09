@@ -89,6 +89,8 @@ export type PositionDataType = {
   title: string;
   desc: string;
   status: string;
+  type: string
+  deployment: string;
 };
 
 export function useFetchPositions() {
@@ -100,7 +102,7 @@ export function useFetchPositions() {
     setIsLoading(true);
     const { data, error } = await supabase
       .from('position')
-      .select(`id, title, desc, status`)
+      .select(`id, title, desc, status, type, deployment`)
       .order('status', { ascending: false })
 
     if (error) {

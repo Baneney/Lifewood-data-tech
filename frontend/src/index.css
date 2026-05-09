@@ -131,3 +131,39 @@ body {
     @apply font-sans;
   }
 }
+
+/* ── DatePicker / react-day-picker styles ── */
+.rdp {
+  --rdp-cell-size: 42px;
+  --rdp-accent-color: #FFB347;
+  --rdp-background-color: #133020;
+  margin: 0;
+}
+
+.rdp-day_selected,
+.rdp-day_active {
+  background-color: var(--rdp-accent-color) !important;
+  color: white !important;
+  border-radius: 14px !important;
+  font-weight: bold;
+}
+
+.rdp-button:hover:not([disabled]):not(.rdp-day_selected) {
+  background-color: rgba(255, 179, 71, 0.1) !important;
+  color: #FFB347 !important;
+  border-radius: 14px !important;
+}
+
+.rdp-caption_label {
+  font-weight: 700 !important;
+  color: #133020 !important;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.rdp-dropdown_month,
+.rdp-dropdown_year {
+  font-weight: 600;
+  color: #133020;
+} 

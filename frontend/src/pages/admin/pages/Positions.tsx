@@ -200,6 +200,8 @@ export default function Positions() {
     title: "",
     desc: "",
     status: "",
+    deployment: "",
+    type: "",
   });
 
 
@@ -208,6 +210,8 @@ export default function Positions() {
     title: false,
     desc: false,
     status: false,
+    deployment: false,
+    type: false,
   });
   
 
@@ -240,20 +244,22 @@ export default function Positions() {
   // Handle opening for CREATE
   const handleCreateClick = () => {
     setIsEditMode(false);
-    setErrors({ title: false, desc: false, status: false }); // Reset errors
-    setFormData({ id: "", title: "", desc: "", status: "open" });
+    setErrors({ title: false, desc: false, status: false, deployment: false, type: false }); // Reset errors
+    setFormData({ id: "", title: "", desc: "", status: "open", deployment: "", type: "" });
     setIsEditModalOpen(true);
   };
 
   // Handle opening for EDIT
   const handleEditClick = (position: PositionDataType) => {
     setIsEditMode(true);
-    setErrors({ title: false, desc: false, status: false }); // Reset errors
+    setErrors({ title: false, desc: false, status: false, deployment: false, type: false }); // Reset errors
     setFormData({
       id: position.id,
       title: position.title,
       desc: position.desc,
       status: position.status,
+      deployment: position.deployment,
+      type: position.type,
     });
     setIsEditModalOpen(true);
   };
@@ -273,6 +279,8 @@ export default function Positions() {
       title: !formData.title?.trim(),
       desc: !formData.desc?.trim(),
       status: !formData.status?.trim(),
+      deployment: !formData.deployment?.trim(),
+      type: !formData.type?.trim(),
     };
 
     setErrors(newErrors);
@@ -307,6 +315,7 @@ export default function Positions() {
           return;
         }
         await useUpdatePosition(formData);
+        console.log("DATA", formData)
         toast.success("Position updated successfully");
       } else {
         const duplicate = positions.some(
@@ -318,6 +327,7 @@ export default function Positions() {
           return;
         }
         await usePostPosition(formData);
+        console.log("DATA", formData);
         toast.success("Position created successfully");
       }
 
@@ -537,7 +547,7 @@ export default function Positions() {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              className="pl-10 py-5 bg-white shadow-sm border border-slate-100 focus-visible:ring-1 focus-visible:ring-[#417256]"
+              className="pl-10 py-5 bg-white dark:bg-[#15291e] shadow-sm border border-slate-100 focus-visible:ring-1 focus-visible:ring-[#417256]"
             />
           </div>
 
@@ -661,14 +671,14 @@ export default function Positions() {
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
           <DialogContent className="sm:max-w-125 p-10">
             <DialogHeader>
-              <DialogTitle className="text-[#046241] font-bold text-2xl">
+              <DialogTitle className="text-[#046241] dark:text-[#06ba72] font-bold text-2xl">
                 {isEditMode ? "Edit Position" : "Create New Position"}
               </DialogTitle>
             </DialogHeader>
 
             <div className="grid gap-4 py-4">
+              {/* Row 1: Title + Status */}
               <div className="flex flex-row gap-4 items-start">
-                {/* Position Title - using flex-1 to take remaining space */}
                 <div className="grid gap-2 flex-1">
                   <Label
                     htmlFor="title"
@@ -681,14 +691,14 @@ export default function Positions() {
                     id="title"
                     value={formData.title}
                     className={cn(
-                      "h-10 py-3 px-3 bg-white border rounded-md shadow-sm",
+                      "h-10 py-3 px-3 bg-white dark:bg-[#141414] border rounded-md shadow-sm",
                       errors.title
                         ? "border-red-500 focus:ring-red-200"
                         : "border-[#133020]/10 focus:border-[#046241]",
                     )}
                     onChange={(e) => {
                       handleInputChange("title", e.target.value);
-                      if (errors.title) setErrors({ ...errors, title: false }); // Clear error on type
+                      if (errors.title) setErrors({ ...errors, title: false });
                     }}
                   />
                   {errors.title && (
@@ -698,7 +708,6 @@ export default function Positions() {
                   )}
                 </div>
 
-                {/* Status - fixed width (e.g., w-40) */}
                 <div className="grid gap-2 w-30">
                   <Label htmlFor="status">
                     Status{" "}
@@ -720,6 +729,86 @@ export default function Positions() {
                       <SelectItem value="closed">Closed</SelectItem>
                     </SelectContent>
                   </Select>
+                </div>
+              </div>
+
+              {/* Row 2: Deployment + Type */}
+              <div className="flex flex-row gap-4 items-start">
+                <div className="grid gap-2 flex-1">
+                  <Label
+                    htmlFor="deployment"
+                    className={cn(errors.deployment && "text-red-500")}
+                  >
+                    Deployment{" "}
+                    {isEditMode ? "" : <span className="text-red-500">*</span>}
+                  </Label>
+                  <Select
+                    value={formData.deployment}
+                    onValueChange={(value) => {
+                      handleInputChange("deployment", value);
+                      if (errors.deployment)
+                        setErrors({ ...errors, deployment: false });
+                    }}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10! w-full bg-white border px-3 shadow-sm",
+                        errors.deployment
+                          ? "border-red-500"
+                          : "border-[#133020]/10 focus:ring-[#046241]/10",
+                      )}
+                    >
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="onsite">On-Site</SelectItem>
+                      <SelectItem value="hybrid">Hybrid</SelectItem>
+                      <SelectItem value="remote">Remote</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.deployment && (
+                    <span className="text-[10px] text-red-500 font-medium">
+                      This field is required
+                    </span>
+                  )}
+                </div>
+
+                <div className="grid gap-2 flex-1">
+                  <Label
+                    htmlFor="type"
+                    className={cn(errors.type && "text-red-500")}
+                  >
+                    Type{" "}
+                    {isEditMode ? "" : <span className="text-red-500">*</span>}
+                  </Label>
+                  <Select
+                    value={formData.type}
+                    onValueChange={(value) => {
+                      handleInputChange("type", value);
+                      if (errors.type) setErrors({ ...errors, type: false });
+                    }}
+                  >
+                    <SelectTrigger
+                      className={cn(
+                        "h-10! w-full bg-white border px-3 shadow-sm",
+                        errors.type
+                          ? "border-red-500"
+                          : "border-[#133020]/10 focus:ring-[#046241]/10",
+                      )}
+                    >
+                      <SelectValue placeholder="Select" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="fulltime">Full-time</SelectItem>
+                      <SelectItem value="parttime">Part-time</SelectItem>
+                      <SelectItem value="internship">Internship</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  {errors.type && (
+                    <span className="text-[10px] text-red-500 font-medium">
+                      This field is required
+                    </span>
+                  )}
                 </div>
               </div>
 
@@ -763,13 +852,13 @@ export default function Positions() {
             <DialogFooter>
               <Button
                 variant="outline"
-                className="py-5 px-4"
+                className="py-5 px-4 cursor-pointer"
                 onClick={() => setIsEditModalOpen(false)}
               >
                 Cancel
               </Button>
               <Button
-                className="bg-[#046241] hover:bg-[#034d33] px-6 py-5"
+                className="bg-[#046241] dark:bg-[#288660]  hover:bg-[#62c29f] dark:text-white px-6 py-5 cursor-pointer"
                 onClick={handleInitiateSave}
               >
                 {isEditMode ? "Update" : "Create"}
@@ -782,19 +871,19 @@ export default function Positions() {
         <AlertDialog open={isConfirmOpen} onOpenChange={setIsConfirmOpen}>
           <AlertDialogContent className="rounded-xl border-[#133020]/10 p-8">
             <AlertDialogHeader>
-              <AlertDialogTitle className="text-[#046241] font-bold text-2xl">
+              <AlertDialogTitle className="text-[#046241] dark:text-[#06ba72] font-bold text-2xl">
                 {isEditMode ? "Confirm Update" : "Create Position"}
               </AlertDialogTitle>
-              <AlertDialogDescription className="py-4 text-md">
+              <AlertDialogDescription className="py-4 text-md dark:text-white/70">
                 {isEditMode ? (
                   <>
                     Are you sure you want to update the{" "}
-                    <span className="font-semibold text-[#046241]">
+                    <span className="font-semibold text-[#046241] dark:text-white">
                       "{formData.title}"
                     </span>{" "}
                     position?
                     <br />
-                    <span className="text-red-500 italic text-xs">
+                    <span className="text-red-500 dark:text-red-400 italic text-xs">
                       * This action will modify the live listing details
                       immediately.
                     </span>
@@ -818,7 +907,7 @@ export default function Positions() {
             <AlertDialogFooter>
               <AlertDialogCancel
                 disabled={isUpdating} // Disable cancel while updating
-                className="border-slate-200 text-slate-500"
+                className="border-slate-200 dark:border-[#1c332a] text-slate-500 dark:text-[#1b845a]"
               >
                 Cancel
               </AlertDialogCancel>
@@ -827,7 +916,7 @@ export default function Positions() {
               <Button
                 onClick={handleFinalUpdate}
                 disabled={isUpdating}
-                className="bg-[#046241] hover:bg-[#034d33] text-white min-w-23"
+                className="bg-[#046241] dark:bg-[#288660] hover:bg-[#62c29f] text-white min-w-23 cursor-pointer"
               >
                 {isUpdating ? (
                   <>

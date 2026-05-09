@@ -9,6 +9,7 @@ import {
   Zap,
   Sparkles,
   Globe,
+  ChevronDown,
 } from "lucide-react";
 
 import ElectricBorder from "../components/ElectricBorder";
@@ -69,6 +70,7 @@ export default function Careers() {
   const [searchResult, setSearchResult] = useState<ApplicationWithLogs | null>(
     null,
   );
+  const [pulsingCardId, setPulsingCardId] = useState<string | null>(null);
 
   // --- Handlers ---
   const handleSearch = async (e: React.FormEvent) => {
@@ -120,7 +122,10 @@ export default function Careers() {
       </div>
 
       {/* 1. HERO SECTION */}
-      <section ref={heroRef} className="relative z-10 pt-40 pb-24 px-8 text-center overflow-hidden">
+      <section
+        ref={heroRef}
+        className="relative z-10 pt-40 pb-24 px-8 text-center overflow-hidden"
+      >
         <motion.div
           style={{ y: heroContentY, opacity: heroOpacity }}
           initial={{ opacity: 0, y: 20 }}
@@ -152,7 +157,10 @@ export default function Careers() {
       </section>
 
       {/* 2. TRACKER SECTION */}
-      <section ref={trackerRef} className="relative z-10 max-w-7xl mx-auto px-8 mb-24">
+      <section
+        ref={trackerRef}
+        className="relative z-10 max-w-7xl mx-auto px-8 mb-24"
+      >
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
@@ -311,52 +319,48 @@ export default function Careers() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, scale: 0.95 }}
                           transition={{ delay: idx * 0.05 }}
-                          whileHover={{ y: -8 }}
-                          className="group relative cursor-pointer"
-                          onClick={() => navigate("/apply")}
+                          whileHover={
+                            pos.status?.toLowerCase() === "closed" ||
+                            pos.status?.toLowerCase() === "onhold"
+                              ? {}
+                              : { y: -8 }
+                          }
+                          className={`group relative ${
+                            pos.status?.toLowerCase() === "closed" ||
+                            pos.status?.toLowerCase() === "onhold"
+                              ? "cursor-not-allowed opacity-50"
+                              : "cursor-pointer"
+                          }`}
+                          onClick={() => {
+                            if (
+                              pos.status?.toLowerCase() === "closed" ||
+                              pos.status?.toLowerCase() === "onhold"
+                            ) {
+                              setPulsingCardId(pos.id);
+                              setTimeout(() => setPulsingCardId(null), 1200);
+                              return;
+                            }
+                            navigate("/apply");
+                          }}
                         >
                           {pos.status?.toLowerCase() === "urgent" ? (
                             /* URGENT CARD STYLE */
-                            <ElectricBorder color="#FFB347" borderRadius={40} chaos={0.07} className="h-full">
-                            <div className="relative h-full bg-white dark:bg-white/[0.02] border border-[#FFB347]/30 dark:border-[#FFB347]/20 p-10 rounded-[2.5rem] flex flex-col justify-between transition-all shadow-xl shadow-[#FFB347]/5">
-                              <div>
-                                <div className="flex items-center gap-2 mb-8">
-                                  <div className="h-1 w-6 bg-[#FFB347] rounded-full" />
-                                  <span className="text-[11px] font-black uppercase text-[#FFB347] tracking-widest">
-                                    {pos.status}
-                                  </span>
-                                  <span className="relative flex h-2 w-2 ml-1">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFB347] opacity-75" />
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFB347]" />
-                                  </span>
-                                </div>
-                                <h3 className="text-2xl font-black uppercase tracking-tight leading-tight text-[#034E34] dark:text-white group-hover:text-[#034E34] dark:group-hover:text-[#FFB347] transition-colors">
-                                  {pos.title}
-                                </h3>
-                                <p className="mt-5 text-slate-600 dark:text-white/40 text-sm font-medium line-clamp-4 leading-relaxed">
-                                  {pos.desc}
-                                </p>
-                              </div>
-                              <div className="mt-12 flex items-center justify-between border-t border-[#FFB347]/10 pt-6">
-                                <span className="text-[11px] font-black text-[#034E34]/20 dark:text-white/20 uppercase tracking-widest">
-                                  Global / Remote
-                                </span>
-                                <div className="p-3 rounded-full bg-[#FFB347]/10 text-[#FFB347] group-hover:bg-[#FFB347] group-hover:text-black transition-all">
-                                  <ArrowRight size={18} />
-                                </div>
-                              </div>
-                            </div>
-                            </ElectricBorder>
-                          ) : (
-                            /* STANDARD CARD STYLE */
-                            <>
-                              <div className="absolute inset-0 bg-[#034E34] dark:bg-[#FFB347] rounded-[2.5rem] opacity-0 group-hover:opacity-[0.03] dark:group-hover:opacity-5 blur-3xl transition-opacity" />
-                              <div className="relative h-full bg-white dark:bg-white/[0.02] border border-[#034E34]/10 dark:border-white/10 p-10 rounded-[2.5rem] flex flex-col justify-between group-hover:border-[#034E34]/40 dark:group-hover:border-[#FFB347]/40 transition-all shadow-lg shadow-[#034E34]/5 dark:shadow-none">
+                            <ElectricBorder
+                              color="#FFB347"
+                              borderRadius={40}
+                              chaos={0.07}
+                              className="h-full"
+                            >
+                              <div className="relative h-full bg-white dark:bg-white/[0.02] border border-[#FFB347]/30 dark:border-[#FFB347]/20 p-10 rounded-[2.5rem] flex flex-col justify-between transition-all shadow-xl shadow-[#FFB347]/5">
                                 <div>
                                   <div className="flex items-center gap-2 mb-8">
-                                    <div className="h-1 w-6 bg-[#034E34] dark:bg-[#FFB347] rounded-full" />
-                                    <span className="text-[11px] font-black uppercase text-[#034E34]/40 dark:text-[#FFB347] tracking-widest">
+                                    <div className="h-1 w-6 bg-[#FFB347] rounded-full" />
+                                    <span className="text-[11px] font-black uppercase text-[#FFB347] tracking-widest">
                                       {pos.status}
+                                    </span>
+                                    <span className="relative flex h-2 w-2 ml-1">
+                                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#FFB347] opacity-75" />
+                                      <span className="relative inline-flex rounded-full h-2 w-2 bg-[#FFB347]" />
                                     </span>
                                   </div>
                                   <h3 className="text-2xl font-black uppercase tracking-tight leading-tight text-[#034E34] dark:text-white group-hover:text-[#034E34] dark:group-hover:text-[#FFB347] transition-colors">
@@ -367,9 +371,67 @@ export default function Careers() {
                                   </p>
                                 </div>
                                 <div className="mt-12 flex items-center justify-between border-t border-[#034E34]/5 dark:border-white/5 pt-6">
-                                  <span className="text-[11px] font-black text-[#034E34]/20 dark:text-white/20 uppercase tracking-widest">
-                                    Global / Remote
-                                  </span>
+                                  <div className="flex items-center gap-1">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#034E34]/8 dark:bg-white/5 border border-[#034E34]/10 dark:border-white/10 text-[10px] font-black uppercase tracking-widest text-[#034E34]/60 dark:text-white/40">
+                                      {pos.type}
+                                    </span>
+                                    <span className="text-[#034E34]/20 dark:text-white/10 text-xs">
+                                      ·
+                                    </span>
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFB347]/10 dark:bg-[#FFB347]/10 border border-[#FFB347]/20 text-[10px] font-black uppercase tracking-widest text-[#FFB347] dark:text-[#FFB347]">
+                                      {pos.deployment}
+                                    </span>
+                                  </div>
+                                  <div className="p-3 rounded-full bg-[#034E34]/5 dark:bg-white/5 text-[#034E34] dark:text-[#FFB347] group-hover:bg-[#034E34] dark:group-hover:bg-[#FFB347] group-hover:text-white dark:group-hover:text-black transition-all">
+                                    <ArrowRight size={18} />
+                                  </div>
+                                </div>
+                              </div>
+                            </ElectricBorder>
+                          ) : (
+                            /* STANDARD CARD STYLE */
+                            <>
+                              <div className="absolute inset-0 bg-[#034E34] dark:bg-[#FFB347] rounded-[2.5rem] opacity-0 group-hover:opacity-[0.03] dark:group-hover:opacity-5 blur-3xl transition-opacity" />
+                              <div className="relative h-full bg-white dark:bg-white/[0.02] border border-[#034E34]/10 dark:border-white/10 p-10 rounded-[2.5rem] flex flex-col justify-between group-hover:border-[#034E34]/40 dark:group-hover:border-[#FFB347]/40 transition-all shadow-lg shadow-[#034E34]/5 dark:shadow-none">
+                                <div>
+                                  <div className="flex items-center gap-2 mb-8">
+                                    <motion.div
+                                      className="flex items-center gap-2"
+                                      animate={
+                                        pulsingCardId === pos.id
+                                          ? { scale: [1, 1.3, 1, 1.3, 1] }
+                                          : { scale: 1 }
+                                      }
+                                      transition={{
+                                        duration: 0.6,
+                                        ease: "easeInOut",
+                                      }}
+                                    >
+                                      <div className="h-1 w-6 bg-[#034E34] dark:bg-[#FFB347] rounded-full" />
+                                      <span className="text-[11px] font-black uppercase text-[#034E34]/40 dark:text-[#FFB347] tracking-widest">
+                                        {pos.status}
+                                      </span>
+                                    </motion.div>
+                                  </div>
+                                  <h3 className="text-2xl font-black uppercase tracking-tight leading-tight text-[#034E34] dark:text-white group-hover:text-[#034E34] dark:group-hover:text-[#FFB347] transition-colors">
+                                    {pos.title}
+                                  </h3>
+                                  <p className="mt-5 text-slate-600 dark:text-white/40 text-sm font-medium line-clamp-4 leading-relaxed">
+                                    {pos.desc}
+                                  </p>
+                                </div>
+                                <div className="mt-12 flex items-center justify-between border-t border-[#034E34]/5 dark:border-white/5 pt-6">
+                                  <div className="flex items-center gap-1">
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#034E34]/8 dark:bg-white/5 border border-[#034E34]/10 dark:border-white/10 text-[10px] font-black uppercase tracking-widest text-[#034E34]/60 dark:text-white/40">
+                                      {pos.type}
+                                    </span>
+                                    <span className="text-[#034E34]/20 dark:text-white/10 text-xs">
+                                      ·
+                                    </span>
+                                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FFB347]/10 dark:bg-[#FFB347]/10 border border-[#FFB347]/20 text-[10px] font-black uppercase tracking-widest text-[#FFB347] dark:text-[#FFB347]">
+                                      {pos.deployment}
+                                    </span>
+                                  </div>
                                   <div className="p-3 rounded-full bg-[#034E34]/5 dark:bg-white/5 text-[#034E34] dark:text-[#FFB347] group-hover:bg-[#034E34] dark:group-hover:bg-[#FFB347] group-hover:text-white dark:group-hover:text-black transition-all">
                                     <ArrowRight size={18} />
                                   </div>
@@ -387,12 +449,25 @@ export default function Careers() {
                   <div className="flex justify-center mt-20">
                     <button
                       onClick={() => setVisibleItems((v) => v + 6)}
-                      className="group flex flex-col items-center gap-4"
+                      className="group flex flex-col items-center gap-3"
                     >
-                      <span className="text-[10px] font-black uppercase tracking-[0.5em] text-[#034E34]/30 dark:text-white/20 group-hover:text-[#034E34] dark:group-hover:text-[#FFB347] transition-colors">
-                        Expand Data Stream
+                      <span className="text-[11px] font-black uppercase tracking-[0.5em] text-[#034E34]/60 dark:text-white/40 group-hover:text-[#034E34] dark:group-hover:text-[#FFB347] transition-colors">
+                        Expand
                       </span>
-                      <div className="h-16 w-[1px] bg-gradient-to-b from-[#034E34] dark:from-[#FFB347] to-transparent animate-bounce" />
+                      <div className="flex flex-col items-center -space-y-2">
+                        {[0, 1, 2].map((i) => (
+                          <ChevronDown
+                            key={i}
+                            size={32}
+                            strokeWidth={3}
+                            className="text-[#034E34] dark:text-white group-hover:text-[#034E34] dark:group-hover:text-[#FFB347] transition-colors"
+                            style={{
+                              opacity: 1 - i * 0.3,
+                              animation: `bounce 1s ease-in-out ${i * 0.18}s infinite`,
+                            }}
+                          />
+                        ))}
+                      </div>
                     </button>
                   </div>
                 )}
@@ -403,10 +478,16 @@ export default function Careers() {
       </main>
 
       {/* 3. SYSTEM BENEFITS: THE CORE DIRECTIVES */}
-      <section ref={benefitsRef} className="relative z-10 py-32 overflow-hidden border-y border-black/5 dark:border-white/5 bg-[#F8F9F8] dark:bg-black/10 transition-colors duration-300">
+      <section
+        ref={benefitsRef}
+        className="relative z-10 py-32 overflow-hidden border-y border-black/5 dark:border-white/5 bg-[#F8F9F8] dark:bg-black/10 transition-colors duration-300"
+      >
         {/* --- BACKGROUND EFFECTS --- */}
         {/* Light Mode: Subtle Green Glow | Dark Mode: Deep Green Glow */}
-        <motion.div style={{ y: benefitsBgY }} className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[400px] bg-[#034E34]/5 dark:bg-[#417256]/5 blur-[120px] rounded-full pointer-events-none z-0 will-change-transform" />
+        <motion.div
+          style={{ y: benefitsBgY }}
+          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[400px] bg-[#034E34]/5 dark:bg-[#417256]/5 blur-[120px] rounded-full pointer-events-none z-0 will-change-transform"
+        />
 
         {/* Grid Texture - Swaps from black to white lines based on mode */}
         <div
@@ -515,12 +596,16 @@ export default function Careers() {
       </section>
 
       {/* 4. MISSION SECTION: The Philosophy */}
-      <section ref={missionRef} className="relative z-10 py-48 px-8 transition-colors duration-300 bg-[#F8F9F8] dark:bg-transparent overflow-hidden">
+      <section
+        ref={missionRef}
+        className="relative z-10 py-48 px-8 transition-colors duration-300 bg-[#F8F9F8] dark:bg-transparent overflow-hidden"
+      >
         {/* Texture Layer: Dotted Grid for Light Mode */}
         <motion.div
           style={{
             y: missionBlobY,
-            backgroundImage: "radial-gradient(#034E34 0.5px, transparent 0.5px)",
+            backgroundImage:
+              "radial-gradient(#034E34 0.5px, transparent 0.5px)",
             backgroundSize: "24px 24px",
           }}
           className="absolute inset-0 opacity-[0.4] dark:opacity-0 pointer-events-none will-change-transform"
@@ -720,34 +805,36 @@ export default function Careers() {
                     </div>
 
                     {/* Previous Logs */}
-                    <div className="max-h-[90px] overflow-y-auto space-y-8 pr-1
+                    <div
+                      className="max-h-[90px] overflow-y-auto space-y-8 pr-1
                       [&::-webkit-scrollbar]:w-1
                       [&::-webkit-scrollbar-track]:bg-transparent
                       [&::-webkit-scrollbar-thumb]:bg-white/10
                       hover:[&::-webkit-scrollbar-thumb]:bg-white/30
-                      [&::-webkit-scrollbar-thumb]:rounded-full">
-                    {searchResult.previous_logs?.map((log) => (
-                      <div
-                        key={log.id}
-                        className="relative opacity-50 hover:opacity-100 transition-opacity"
-                      >
-                        <div className="absolute -left-[21px] top-1.5 h-[8px] w-[8px] rounded-full bg-white/20 border border-[#021a11]" />
-                        <div className="flex justify-between items-center group">
-                          <span className="text-[11px] font-bold uppercase tracking-tight group-hover:text-white transition-colors">
-                            {log.status}
-                          </span>
-                          <span className="text-[10px] text-white tabular-nums">
-                            {new Date(log.datetime).toLocaleDateString()}
-                          </span>
+                      [&::-webkit-scrollbar-thumb]:rounded-full"
+                    >
+                      {searchResult.previous_logs?.map((log) => (
+                        <div
+                          key={log.id}
+                          className="relative opacity-50 hover:opacity-100 transition-opacity"
+                        >
+                          <div className="absolute -left-[21px] top-1.5 h-[8px] w-[8px] rounded-full bg-white/20 border border-[#021a11]" />
+                          <div className="flex justify-between items-center group">
+                            <span className="text-[11px] font-bold uppercase tracking-tight group-hover:text-white transition-colors">
+                              {log.status}
+                            </span>
+                            <span className="text-[10px] text-white tabular-nums">
+                              {new Date(log.datetime).toLocaleDateString()}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    ))}
+                      ))}
 
-                    {!searchResult.previous_logs && (
-                      <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest italic pl-2">
-                        No prior history
-                      </p>
-                    )}
+                      {!searchResult.previous_logs && (
+                        <p className="text-[10px] font-bold text-white/10 uppercase tracking-widest italic pl-2">
+                          No prior history
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>

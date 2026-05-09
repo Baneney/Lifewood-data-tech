@@ -43,14 +43,14 @@ export function DetailsDrawer({
         </Button>
       </SheetTrigger>
 
-      <SheetContent className="sm:max-w-md w-full flex flex-col border-l-0 shadow-2xl p-6 rounded-l-2xl">
+      <SheetContent className="sm:max-w-md bg-white dark:bg-[#133020] w-full flex flex-col border-l-0 shadow-2xl p-6 rounded-l-2xl">
         {/* Sticky Header Section */}
         <SheetHeader className="text-left p-0 pb-6">
-          <SheetTitle className="text-xl font-bold tracking-tight text-[#046241]">
+          <SheetTitle className="text-xl font-bold tracking-tight text-[#046241] dark:text-white">
             {title}
           </SheetTitle>
           {description && (
-            <SheetDescription className="text-xs text-slate-500">
+            <SheetDescription className="text-xs text-slate-500 dark:text-white">
               {description}
             </SheetDescription>
           )}

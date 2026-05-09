@@ -45,7 +45,7 @@ export const FormLoader = ({ message = "Processing" }: { message?: string }) => 
       animate="animate"
       exit="exit"
       // "absolute inset-0" ensures it covers only the parent container
-      className="absolute inset-0 z-50 flex items-center justify-center bg-[#D1D5DB]/90 backdrop-blur-md rounded-[3rem]"
+      className="absolute inset-0 z-50 flex items-center justify-center bg-[#D1D5DB] backdrop-blur-md rounded-[3rem]"
     >
       <div className="text-center space-y-12">
         

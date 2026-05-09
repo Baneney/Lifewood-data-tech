@@ -93,7 +93,7 @@ const statusConfig: Record<string, { label: string; className: string }> = {
 const getColumns = (
   onUpdate: (
     appId: string,
-    data: { status: string; potential: boolean; remarks: string; email: string; name: string; position: string; },
+    data: { status: string; potential: boolean; remarks: string; email: string; name: string; position: string; originalStatus: string; },
   ) => void,
   openDrawerId: string | null,
   onDrawerClose: (id: string) => void,
@@ -178,19 +178,21 @@ const getColumns = (
           title="Application Review"
           description="Detailed profile and application history."
           open={isOpen}
-          onOpenChange={(open) => { if (!open) onDrawerClose(app.id); }}
+          onOpenChange={(open) => {
+            if (!open) onDrawerClose(app.id);
+          }}
         >
           {/* Wrap content in a flex container to allow for a sticky footer */}
           <div className="flex flex-col h-full">
             <div className="flex-1 space-y-8 pb-24">
               {" "}
               {/* Assessment & Status Section */}
-              <section className="relative overflow-hidden bg-emerald-600/20 p-6 rounded-[1rem] border border-emerald-600/30 shadow-inner">
+              <section className="relative overflow-hidden bg-emerald-600/20 dark:bg-[#708E7C] p-6 rounded-[1rem] border border-emerald-600/30 dark:border-[#417256] shadow-inner">
                 <div className="flex flex-col gap-6">
                   {/* Top Row: Label and the Dynamic Assessment Card */}
                   <div className="flex items-center justify-between">
                     {/* Slightly darkened the text color for better contrast on emerald-600/20 */}
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-800/60">
+                    <h4 className="text-[11px] font-black uppercase tracking-[0.2em] text-emerald-800/60 dark:text-[#133020]">
                       Assessment
                     </h4>
 
@@ -237,7 +239,7 @@ const getColumns = (
 
                   {/* Bottom Row: Status Dropdown */}
                   <div className="space-y-2">
-                    <p className="text-[10px] font-black text-emerald-800/50 pl-1 tracking-wider uppercase">
+                    <p className="text-[10px] font-black text-emerald-800/50 dark:text-[#133020] pl-1 tracking-wider uppercase">
                       Application Status
                     </p>
                     <Select value={localStatus} onValueChange={setLocalStatus}>
@@ -268,46 +270,48 @@ const getColumns = (
               </section>
               {/* Personal Info */}
               <section className="space-y-4 px-1 py-3">
-                <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-800/70">
+                <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-800/70 dark:text-[#6ee7b7]">
                   Personal Information
                 </h4>
                 <div className="grid gap-4">
-                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                    <UserRound className="h-4 w-4 text-slate-400" />
+                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-white">
+                    <UserRound className="h-4 w-4 text-slate-400 dark:text-white" />
                     <span>{`${capitalize(app.applicant.lname)}, ${capitalize(app.applicant.fname)}`}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                    <Mail className="h-4 w-4 text-slate-400" />
+                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-white">
+                    <Mail className="h-4 w-4 text-slate-400 dark:text-white" />
                     <span>{app.applicant.email}</span>
                   </div>
-                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                    <Phone className="h-4 w-4 text-slate-400" />
+                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-white">
+                    <Phone className="h-4 w-4 text-slate-400 dark:text-white" />
                     <span>{app.applicant.phone}</span>
                   </div>{" "}
-                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                    <Cake className="h-4 w-4 text-slate-400" />
+                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-white">
+                    <Cake className="h-4 w-4 text-slate-400 dark:text-white" />
                     <span>{`${app.applicant.dob} (${calculateBday(app.applicant.dob)})`}</span>
                   </div>
                 </div>
               </section>
               {/* Job Details */}
               <section className="space-y-4 px-1 py-3">
-                <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-800/70">
+                <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-800/70 dark:text-[#6ee7b7]">
                   Job Details
                 </h4>
                 <div className="grid gap-4">
-                  <div className="flex items-start gap-3 text-sm font-medium text-slate-600">
-                    <Briefcase className="h-4 w-4 text-slate-400 mt-0.5" />
+                  <div className="flex items-start gap-3 text-sm font-medium text-slate-600 dark:text-white">
+                    <Briefcase className="h-4 w-4 text-slate-400 mt-0.5 dark:text-white" />
                     <p>
                       Position:{" "}
-                      <b className="text-slate-900">{app.position.title}</b>
+                      <b className="text-slate-900 dark:text-white/70">
+                        {app.position.title}
+                      </b>
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600">
-                    <Calendar className="h-4 w-4 text-slate-400" />
+                  <div className="flex items-center gap-3 text-sm font-medium text-slate-600 dark:text-white">
+                    <Calendar className="h-4 w-4 text-slate-400 dark:text-white" />
                     <p>
                       Applied on:{" "}
-                      <span className="text-slate-900 font-semibold">
+                      <span className="text-slate-900 dark:text-white/70 font-semibold">
                         {new Date(app.date_submitted).toLocaleDateString()}
                       </span>
                     </p>
@@ -316,7 +320,7 @@ const getColumns = (
               </section>
               {/* Documents */}
               <section className="space-y-4 px-1 py-3">
-                <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-800/70">
+                <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-800/70 dark:text-[#6ee7b7]">
                   Attached Documents
                 </h4>
                 <a
@@ -330,10 +334,10 @@ const getColumns = (
                       <FileText className="h-5 w-5 text-emerald-600" />
                     </div>
                     <div className="flex flex-col">
-                      <span className="text-sm font-bold text-slate-700 group-hover:text-emerald-700">
+                      <span className="text-sm font-bold text-slate-700 dark:text-white group-hover:text-emerald-700">
                         Resume_v1.pdf
                       </span>
-                      <span className="text-[9px] text-slate-400 uppercase font-bold tracking-tighter">
+                      <span className="text-[9px] text-slate-400 dark:text-white uppercase font-bold tracking-tighter">
                         PDF Document
                       </span>
                     </div>
@@ -343,7 +347,7 @@ const getColumns = (
               </section>
               {/* Remarks Section */}
               <section className="space-y-3 px-1 py-3">
-                <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-800/70">
+                <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-emerald-800/70 dark:text-[#6ee7b7]">
                   Admin Remarks
                 </h4>
                 <Textarea
@@ -359,7 +363,7 @@ const getColumns = (
             </div>
 
             {/* Sticky Footer for Action Button */}
-            <div className="absolute bottom-0 right-0 p-6 bg-linear-to-t from-white via-white to-transparent w-full">
+            <div className="absolute bottom-0 right-0 p-6 bg-white dark:bg-[#133020] w-full">
               <button
                 onClick={() =>
                   onUpdate(app.id, {
@@ -369,6 +373,7 @@ const getColumns = (
                     email: app.applicant.email,
                     name: `${app.applicant.fname} ${app.applicant.lname}`,
                     position: app.position.title,
+                    originalStatus: app.current_status ?? "pending",
                   })
                 }
                 className="w-fit bg-[#046241] hover:bg-[#034E34] text-white text-xs font-bold px-8 py-3 rounded-xl transition-all shadow-lg shadow-emerald-900/10 active:scale-95 flex items-center gap-2"
@@ -421,9 +426,10 @@ export default function Applications() {
     status: string;
     potential: boolean;
     remarks: string;
-    email: string; // Add this
-    name: string; // Add this
+    email: string;
+    name: string;
     position: string;
+    originalStatus: string;
   } | null>(null);
 
   // Card counts derived from full applications list
@@ -475,7 +481,7 @@ export default function Applications() {
   // Handlers
   const handleInitiateChange = (
     appId: string,
-    data: { status: string; potential: boolean;  remarks: string; email: string; name: string; position: string; },
+    data: { status: string; potential: boolean; remarks: string; email: string; name: string; position: string; originalStatus: string; },
   ) => {
     setPendingUpdate({ id: appId, ...data });
     setConfirmOpen(true);
@@ -495,9 +501,12 @@ export default function Applications() {
       });
       
       if (
-        pendingUpdate.status === "hired" ||
-        pendingUpdate.status === "not selected" ||
-        pendingUpdate.status === "shortlisted"
+        pendingUpdate.originalStatus !== pendingUpdate.status &&
+        (
+          pendingUpdate.status === "hired" ||
+          pendingUpdate.status === "not selected" ||
+          pendingUpdate.status === "shortlisted"
+        )
       ) {
 
         const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
@@ -650,7 +659,7 @@ export default function Applications() {
             placeholder="Search by name or role..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10 py-5 bg-white shadow-sm border border-slate-100 focus-visible:ring-1 focus-visible:ring-[#417256]"
+            className="pl-10 py-5 bg-white dark:bg-[#15291e] shadow-sm border border-slate-100 focus-visible:ring-1 focus-visible:ring-[#417256]"
           />
         </div>
         <div className="flex items-center gap-3 w-full md:w-auto">

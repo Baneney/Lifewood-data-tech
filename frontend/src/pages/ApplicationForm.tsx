@@ -527,6 +527,7 @@ export default function ApplicationForm() {
                                 ? "border-red-500"
                                 : "border-white/10 hover:border-white/30",
                             )}
+
                           />
                           {errors.position && (
                             <p className="text-[10px] text-red-400 italic ml-1">
@@ -857,7 +858,7 @@ export default function ApplicationForm() {
 
                           <h4 className="text-xl font-bold">
                             {selectedFile
-                              ? "Resume Locked In"
+                              ? "Resume Uploaded"
                               : "Drop your CV here"}
                           </h4>
 

@@ -499,7 +499,7 @@ export default function Applications() {
         pendingUpdate.status === "not selected" ||
         pendingUpdate.status === "shortlisted"
       ) {
-        
+
         const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 
@@ -531,7 +531,7 @@ export default function Applications() {
     }
   };
 
-  const columns = getColumns(handleInitiateChange, openDrawerId, (id) => setOpenDrawerId(null));
+  const columns = getColumns(handleInitiateChange, openDrawerId, (_id) => setOpenDrawerId(null));
 
   const cards = [
     { key: "all" as const,         label: "Total",       value: totalCount,       sub: "All applications",      icon: Users },

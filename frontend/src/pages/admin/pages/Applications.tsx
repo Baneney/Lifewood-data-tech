@@ -2,6 +2,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 import { useState, useMemo, useEffect } from "react";
 import { toast } from "sonner";
+import { useLocation } from "react-router-dom";
 
 // UI Components
 import {
@@ -94,6 +95,8 @@ const getColumns = (
     appId: string,
     data: { status: string; potential: boolean; remarks: string; email: string; name: string; position: string; },
   ) => void,
+  openDrawerId: string | null,
+  onDrawerClose: (id: string) => void,
 ): ColumnDef<ApplicationDataType>[] => [
   {
     accessorKey: "applicant.fname",
@@ -168,11 +171,14 @@ const getColumns = (
         app.logs?.[0]?.potential || false,
       );
       const [localRemarks, setLocalRemarks] = useState(app.logs?.[0]?.remarks || "");
+      const isOpen = openDrawerId === app.id;
 
       return (
         <DetailsDrawer
           title="Application Review"
           description="Detailed profile and application history."
+          open={isOpen}
+          onOpenChange={(open) => { if (!open) onDrawerClose(app.id); }}
         >
           {/* Wrap content in a flex container to allow for a sticky footer */}
           <div className="flex flex-col h-full">
@@ -384,6 +390,21 @@ export default function Applications() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { adminId } = useAdmin();
   const { setLoading } = useLoadingBar();
+  const location = useLocation();
+  const [openDrawerId, setOpenDrawerId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (location.state?.openAppId && !isLoading && applications.length > 0) {
+      const targetId = location.state.openAppId;
+      const targetIndex = applications.findIndex((a) => a.id === targetId);
+      if (targetIndex !== -1) {
+        const targetPage = Math.floor(targetIndex / ITEMS_PER_PAGE) + 1;
+        setCurrentPage(targetPage);
+      }
+      setOpenDrawerId(targetId);
+      window.history.replaceState({}, "");
+    }
+  }, [location.state, isLoading, applications]);
 
   useEffect(() => { setLoading(isLoading || isSubmitting); }, [isLoading, isSubmitting]);
 
@@ -478,7 +499,9 @@ export default function Applications() {
         pendingUpdate.status === "not selected" ||
         pendingUpdate.status === "shortlisted"
       ) {
-        const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+        // const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+        const API_BASE_URL = "http://localhost:5000";
 
         await fetch(`${API_BASE_URL}/api/hired-or-rejected`, {
           method: "POST",
@@ -508,7 +531,7 @@ export default function Applications() {
     }
   };
 
-  const columns = getColumns(handleInitiateChange);
+  const columns = getColumns(handleInitiateChange, openDrawerId, (id) => setOpenDrawerId(null));
 
   const cards = [
     { key: "all" as const,         label: "Total",       value: totalCount,       sub: "All applications",      icon: Users },

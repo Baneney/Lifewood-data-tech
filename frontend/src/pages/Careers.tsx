@@ -720,6 +720,12 @@ export default function Careers() {
                     </div>
 
                     {/* Previous Logs */}
+                    <div className="max-h-[90px] overflow-y-auto space-y-8 pr-1
+                      [&::-webkit-scrollbar]:w-1
+                      [&::-webkit-scrollbar-track]:bg-transparent
+                      [&::-webkit-scrollbar-thumb]:bg-white/10
+                      hover:[&::-webkit-scrollbar-thumb]:bg-white/30
+                      [&::-webkit-scrollbar-thumb]:rounded-full">
                     {searchResult.previous_logs?.map((log) => (
                       <div
                         key={log.id}
@@ -742,6 +748,7 @@ export default function Careers() {
                         No prior history
                       </p>
                     )}
+                    </div>
                   </div>
                 </div>
               </div>

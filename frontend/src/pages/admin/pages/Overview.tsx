@@ -1,6 +1,6 @@
 
 
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Users,
   TrendingUp,
@@ -10,8 +10,6 @@ import {
   Calendar,
   Search,
 } from "lucide-react";
-
-
 
 //API IMPORTS
 import { useRecentApplications, type RecentApplicationType } from "../../../api/overview/overviewFetchAPI";
@@ -100,6 +98,8 @@ export default function Overview() {
 
   useEffect(() => { setLoading(isLoading); }, [isLoading]);
 
+  const navigate = useNavigate();
+
   // Basic Loading State
   if (isLoading)
     return (
@@ -170,7 +170,7 @@ export default function Overview() {
     .sort((a, b) => {
       const aPotential = a.logs?.[0]?.potential ? 1 : 0;
       const bPotential = b.logs?.[0]?.potential ? 1 : 0;
-      if (aPotential !== bPotential) return aPotential - bPotential;
+      if (aPotential !== bPotential) return bPotential - aPotential;
       return new Date(b.date_submitted).getTime() - new Date(a.date_submitted).getTime();
     })
     .slice(0, 6);
@@ -518,8 +518,8 @@ export default function Overview() {
                     </div>
                   </div>
 
-                  <Link
-                    to={`/admin/applications`}
+                  <button
+                    onClick={() => navigate("/admin/applications", { state: { openAppId: app.id } })}
                     className={`px-4 py-2 rounded-xl text-[9px] font-black transition-all duration-300 uppercase tracking-widest ${
                       isPotential
                         ? "bg-[#FFB347] text-white shadow-md shadow-orange-200 hover:brightness-105"
@@ -527,7 +527,7 @@ export default function Overview() {
                     }`}
                   >
                     View Profile
-                  </Link>
+                  </button>
                 </div>
               </div>
             );

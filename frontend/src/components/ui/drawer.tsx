@@ -15,6 +15,8 @@ interface DetailsDrawerProps {
   description?: string;
   triggerLabel?: string | ReactNode;
   children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 export function DetailsDrawer({
@@ -22,9 +24,11 @@ export function DetailsDrawer({
   description,
   triggerLabel = "View",
   children,
+  open,
+  onOpenChange,
 }: DetailsDrawerProps) {
   return (
-    <Sheet>
+    <Sheet open={open === true ? true : undefined} onOpenChange={onOpenChange}>
       <SheetTrigger asChild>
         <Button
           variant="ghost"

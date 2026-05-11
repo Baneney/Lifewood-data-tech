@@ -3,6 +3,7 @@ import { useEffect, lazy, Suspense } from "react"
 import Lenis from "lenis"
 import Navbar from "./pages/Navbar"
 import Footer from "./pages/Footer"
+import Chatbot from "./components/Chatbot"
 import { Toaster } from "./components/ui/sonner"
 import ProtectedRoute from "./pages/ProtectedRoutes"
 
@@ -41,6 +42,7 @@ function PublicLayout() {
       <Navbar />
       <Outlet />
       <Footer />
+      <Chatbot />
     </>
   )
 }
